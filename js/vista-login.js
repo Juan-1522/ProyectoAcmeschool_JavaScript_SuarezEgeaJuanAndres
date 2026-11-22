@@ -66,35 +66,6 @@ function loginFormulario() {
     </form>`;
 }
 
-function loginTarjeta(sesion) {
-  const iniciales = sesion.nombre
-    .split(' ')
-    .filter((palabra) => palabra.length > 2)
-    .slice(0, 2)
-    .map((palabra) => palabra[0])
-    .join('');
-
-  return `
-    <div class="form">
-      <p class="eyebrow">Sesión abierta</p>
-      <h1>Hola, ${sesion.nombre.split(' ')[0]}</h1>
-      <p class="sub">Ya puedes administrar los usuarios y los exámenes de la escuela.</p>
-
-      <div class="sesion">
-        <span class="avatar">${iniciales}</span>
-        <div>
-          <b>${sesion.nombre}</b>
-          <p class="dato">${sesion.cargo} · identificación ${sesion.id}</p>
-          <p class="dato">Sesión iniciada el ${new Date(sesion.hora).toLocaleString('es-CO')}</p>
-        </div>
-      </div>
-
-      <button class="btn sec big" type="button" id="salir">
-        <i class="ic out"></i> Cerrar sesión
-      </button>
-    </div>`;
-}
-
 function enlazarFormulario(monticulo) {
   const aviso = monticulo.querySelector('#aviso');
 
@@ -134,24 +105,11 @@ function enlazarFormulario(monticulo) {
     }
 
     Acme.sesion.abrir(usuario, monticulo.querySelector('#recordar').checked);
-    Acme.vistas.login(monticulo);
-  });
-}
-
-function enlazarSalida(monticulo) {
-  monticulo.querySelector('#salir').addEventListener('click', () => {
-    Acme.sesion.cerrar();
-    Acme.vistas.login(monticulo);
+    Acme.mostrar();
   });
 }
 
 Acme.vistas.login = (monticulo) => {
-  const sesion = Acme.sesion.actual();
-  monticulo.innerHTML = '<main class="auth">' + loginMarca + (sesion ? loginTarjeta(sesion) : loginFormulario()) + '</main>';
-
-  if (sesion) {
-    enlazarSalida(monticulo);
-  } else {
-    enlazarFormulario(monticulo);
-  }
+  monticulo.innerHTML = '<main class="auth">' + loginMarca + loginFormulario() + '</main>';
+  enlazarFormulario(monticulo);
 };
