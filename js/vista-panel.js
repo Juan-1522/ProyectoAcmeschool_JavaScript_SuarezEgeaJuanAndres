@@ -20,6 +20,27 @@ Acme.vistas.panel = (monticulo) => {
   const minutos = examenes.reduce((total, uno) => total + uno.tiempo, 0);
   const masLargo = Math.max(...examenes.map((uno) => uno.tiempo));
 
+  // El color de cada barra sale del promedio frente al porcentaje de aprobación
+  // que el examen tiene configurado, no de un umbral fijo para todos.
+  const barras = examenes.map((examen) => {
+    const notas = Acme.estado.intentos
+      .filter((uno) => uno.codigo === examen.codigo)
+      .map((uno) => Acme.nota(examen, uno.elegidas).porcentaje);
+    const promedio = notas.length
+      ? Math.round(notas.reduce((total, una) => total + una, 0) / notas.length)
+      : null;
+
+    const clase = promedio === null ? 'sin' : promedio >= examen.aprobacion ? 'alto' : 'bajo';
+    const etiqueta = promedio === null ? 'sin notas' : promedio + ' %';
+    const alto = promedio === null ? '' : ` style="height:${promedio}%"`;
+
+    return `
+      <div class="barra">
+        <div class="pista"><span${alto} class="l ${clase}"></span></div>
+        <p class="et">${examen.titulo}<b>${etiqueta}</b></p>
+      </div>`;
+  }).join('');
+
   const intentos = Acme.estado.intentos
     .slice()
     .sort((uno, otro) => otro.fecha.localeCompare(uno.fecha))
@@ -105,6 +126,16 @@ Acme.vistas.panel = (monticulo) => {
                 <div class="k">Tiempo sumado</div>
                 <div class="d">el más largo dura ${masLargo} min</div>
               </div>
+            </div>
+
+            <div class="card">
+              <div class="ch">
+                <div>
+                  <h3>Rendimiento por examen</h3>
+                  <p class="sub">Porcentaje promedio de quienes lo han resuelto</p>
+                </div>
+              </div>
+              <div class="barras">${barras}</div>
             </div>
 
             <div class="card">

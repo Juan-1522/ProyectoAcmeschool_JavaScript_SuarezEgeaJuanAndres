@@ -580,6 +580,59 @@ td .sm {
   color: var(--mute);
 }
 
+/* ===== gráfica de rendimiento ===== */
+
+.barras {
+  align-items: flex-end;
+  display: flex;
+  gap: 26px;
+  padding: 4px 6px 0;
+}
+
+.barra {
+  flex: 1;
+  text-align: center;
+}
+
+.pista {
+  align-items: flex-end;
+  display: flex;
+  height: 140px;
+}
+
+.pista .l {
+  border-radius: 8px 8px 3px 3px;
+  min-height: 6px;
+  width: 100%;
+}
+
+.pista .l.alto {
+  background: linear-gradient(180deg, var(--ok), #4aae86);
+}
+
+.pista .l.bajo {
+  background: linear-gradient(180deg, var(--coral), #f08a63);
+}
+
+.pista .l.sin {
+  background: #dfe6ee;
+  height: 44px;
+}
+
+.barra .et {
+  color: var(--mute);
+  font-size: 12px;
+  line-height: 1.35;
+  margin: 9px 0 0;
+  overflow-wrap: break-word;
+}
+
+.barra .et b {
+  color: var(--ink);
+  display: block;
+  margin-top: 2px;
+}
+
 /* ===== inicio de sesión ===== */
 
 .auth {
