@@ -401,6 +401,41 @@ textarea {
   font-weight: 750;
 }
 
+/* ===== avisos de los formularios ===== */
+
+.error {
+  color: var(--no);
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+input.malo {
+  border-color: var(--no);
+}
+
+input.malo:focus {
+  box-shadow: 0 0 0 3px rgba(194, 47, 47, .14);
+}
+
+.aviso {
+  padding: 11px 14px;
+  border-radius: 11px;
+  font-size: 13.5px;
+  margin-bottom: 18px;
+}
+
+.aviso.no {
+  background: var(--no-soft);
+  border: 1px solid #f0c9c8;
+  color: #8f2020;
+}
+
+.aviso.ok {
+  background: var(--ok-soft);
+  border: 1px solid #bfe3d3;
+  color: #0b5c41;
+}
+
 @media (max-width: 900px) {
   .auth {
     grid-template-columns: 1fr;
