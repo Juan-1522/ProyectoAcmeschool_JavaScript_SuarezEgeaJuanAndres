@@ -1,0 +1,70 @@
+:root {
+  --ink: #141c26;
+  --ink-2: #33404f;
+  --mute: #5d6b7b;
+  --bg: #f2f5f9;
+  --card: #ffffff;
+  --line: #e3e9f1;
+  --line-2: #eef2f7;
+  --navy: #0d1b2a;
+  --navy-2: #16304a;
+  --coral: #e2532b;
+  --coral-soft: #fdeee8;
+  --coral-ink: #b83a18;
+  --petrol: #186a84;
+  --petrol-soft: #e8f3f7;
+  --ok: #0f7a56;
+  --ok-soft: #e6f5ee;
+  --no: #c22f2f;
+  --no-soft: #fbeceb;
+  --warn: #a8710f;
+  --warn-soft: #fbf2e0;
+  --radius: 16px;
+  --shadow-1: 0 1px 2px rgba(13, 27, 42, .07);
+  --shadow-2: 0 2px 4px rgba(13, 27, 42, .05), 0 14px 32px rgba(13, 27, 42, .09);
+  --font: "Segoe UI Variable Text", "Segoe UI", system-ui, Arial, sans-serif;
+  --mono: Consolas, "Courier New", monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 15px/1.55 var(--font);
+}
+
+h1, h2, h3 {
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: -.3px;
+}
+
+h1 { font-size: 25px; }
+h2 { font-size: 18px; }
+h3 { font-size: 14.5px; }
+
+p { margin: 0; }
+
+a { color: var(--petrol); }
+
+input, select, textarea, button {
+  font: inherit;
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: #1a3a5c;
+  background: #f1f5f9;
+  padding: 1px 6px;
+  border-radius: 6px;
+}
+
+:focus-visible {
+  outline: 3px solid #0f5f78;
+  outline-offset: 2px;
+}
