@@ -461,6 +461,125 @@ textarea {
   margin-top: 9px;
 }
 
+/* ===== tarjetas y tablas ===== */
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-2);
+  padding: 20px 22px;
+  margin-bottom: 20px;
+}
+
+.card > .ch {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.card > .ch h3 {
+  font-size: 15.5px;
+}
+
+.card > .ch .sub {
+  font-size: 12.5px;
+}
+
+.tw {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+th {
+  text-align: left;
+  color: var(--mute);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: .7px;
+  font-weight: 800;
+  padding: 11px;
+  background: #f7fafc;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+th:first-child {
+  border-radius: 11px 0 0 11px;
+}
+
+th:last-child {
+  border-radius: 0 11px 11px 0;
+}
+
+td {
+  padding: 12px 11px;
+  border-bottom: 1px solid var(--line-2);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+tbody tr:hover {
+  background: #f8fbfe;
+}
+
+td .person {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+td .person .av {
+  width: 29px;
+  height: 29px;
+  font-size: 11px;
+}
+
+td .person small {
+  display: block;
+  color: var(--mute);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+td .sm {
+  color: var(--mute);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 750;
+}
+
+.pill::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.pill.pub {
+  background: var(--ok-soft);
+  color: var(--ok);
+}
+
+.pill.dra {
+  background: #eff1f4;
+  color: var(--mute);
+}
+
 /* ===== inicio de sesión ===== */
 
 .auth {
@@ -612,6 +731,9 @@ textarea {
 .sub {
   color: var(--mute);
   font-size: 13.5px;
+}
+
+.auth .sub {
   margin-bottom: 26px;
 }
 

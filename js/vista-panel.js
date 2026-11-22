@@ -20,6 +20,34 @@ Acme.vistas.panel = (monticulo) => {
   const minutos = examenes.reduce((total, uno) => total + uno.tiempo, 0);
   const masLargo = Math.max(...examenes.map((uno) => uno.tiempo));
 
+  const intentos = Acme.estado.intentos
+    .slice()
+    .sort((uno, otro) => otro.fecha.localeCompare(uno.fecha))
+    .slice(0, 3);
+
+  const filas = intentos.map((intento) => {
+    const examen = examenes.find((uno) => uno.codigo === intento.codigo);
+    const nota = Acme.nota(examen, intento.elegidas);
+    const agotado = `${examen.tiempo}:00`;
+    const tiempo = intento.tiempoUsado === agotado
+      ? `${intento.tiempoUsado} · tiempo agotado`
+      : `${intento.tiempoUsado} de ${agotado}`;
+
+    return `
+      <tr>
+        <td>
+          <div class="person">
+            <span class="av">${iniciales(intento.nombre)}</span>
+            <div>${intento.nombre}<small>${intento.identificacion}</small></div>
+          </div>
+        </td>
+        <td>${examen.titulo}</td>
+        <td><b>${nota.porcentaje} %</b></td>
+        <td class="sm">${tiempo}</td>
+        <td><span class="pill ${nota.aprobado ? 'pub' : 'dra'}">${nota.aprobado ? 'Aprobado' : 'No aprobado'}</span></td>
+      </tr>`;
+  }).join('');
+
   monticulo.innerHTML = `
     <div class="page">
       <aside class="side">
@@ -76,6 +104,29 @@ Acme.vistas.panel = (monticulo) => {
                 <div class="v">${minutos} min</div>
                 <div class="k">Tiempo sumado</div>
                 <div class="d">el más largo dura ${masLargo} min</div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="ch">
+                <div>
+                  <h3>Últimos intentos</h3>
+                  <p class="sub">Los tres exámenes terminados más recientes</p>
+                </div>
+              </div>
+              <div class="tw">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Estudiante</th>
+                      <th>Examen</th>
+                      <th>Nota</th>
+                      <th>Tiempo usado</th>
+                      <th>Estado</th>
+                    </tr>
+                  </thead>
+                  <tbody>${filas}</tbody>
+                </table>
               </div>
             </div>
           </div>
