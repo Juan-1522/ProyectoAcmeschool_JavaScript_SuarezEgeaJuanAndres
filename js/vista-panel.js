@@ -1,16 +1,6 @@
 Acme.vistas = Acme.vistas || {};
 
-function iniciales(nombre) {
-  return nombre
-    .split(' ')
-    .filter((palabra) => palabra.length > 2)
-    .slice(0, 2)
-    .map((palabra) => palabra[0])
-    .join('');
-}
-
 Acme.vistas.panel = (monticulo) => {
-  const sesion = Acme.sesion.actual();
   const usuarios = Acme.estado.usuarios;
   const examenes = Acme.estado.examenes;
 
@@ -69,38 +59,11 @@ Acme.vistas.panel = (monticulo) => {
       </tr>`;
   }).join('');
 
-  monticulo.innerHTML = `
-    <div class="page">
-      <aside class="side">
-        <div class="brand">
-          <span class="bk">A</span>
-          <div><b>Acme School</b><small>Plataforma de exámenes</small></div>
-        </div>
-
-        <p class="navlab">Módulos privados</p>
-        <div class="nav on"><i class="ic grid"></i>Panel</div>
-
-        <div class="sidefoot">
-          <div class="me">
-            <span class="av">${iniciales(sesion.nombre)}</span>
-            <div><b>${sesion.nombre}</b><small>${sesion.cargo}</small></div>
-            <button class="ib" id="salir" type="button" aria-label="Cerrar sesión">
-              <i class="ic out"></i>
-            </button>
-          </div>
-        </div>
-      </aside>
-
-      <main class="main">
-        <header class="head">
-          <div>
-            <p class="eyebrow">Acme School</p>
-            <h1>Panel general</h1>
-          </div>
-        </header>
-
-        <div class="body">
-          <div class="col">
+  Acme.montar(monticulo, {
+    activa: '#/panel',
+    eyebrow: 'Acme School',
+    titulo: 'Panel general',
+    contenido: `
             <div class="tiles">
               <div class="tile">
                 <div class="i pe"><i class="ic users"></i></div>
@@ -160,13 +123,6 @@ Acme.vistas.panel = (monticulo) => {
                 </table>
               </div>
             </div>
-          </div>
-        </div>
-      </main>
-    </div>`;
-
-  monticulo.querySelector('#salir').addEventListener('click', () => {
-    Acme.sesion.cerrar();
-    Acme.mostrar();
+    `
   });
 };

@@ -281,6 +281,7 @@ textarea {
   font-size: 14px;
   font-weight: 600;
   margin-bottom: 3px;
+  text-decoration: none;
 }
 
 .nav .ic {
@@ -303,6 +304,11 @@ textarea {
   background: rgba(255, 255, 255, .13);
   color: #fff;
   box-shadow: inset 2px 0 0 var(--coral);
+}
+
+a.nav:hover {
+  background: rgba(255, 255, 255, .08);
+  color: #fff;
 }
 
 .sidefoot {
@@ -552,6 +558,13 @@ td .sm {
   color: var(--mute);
 }
 
+td .code {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+
 .pill {
   display: inline-flex;
   align-items: center;
@@ -578,6 +591,16 @@ td .sm {
 .pill.dra {
   background: #eff1f4;
   color: var(--mute);
+}
+
+.pill.doc {
+  background: var(--petrol-soft);
+  color: var(--petrol);
+}
+
+.pill.adm {
+  background: var(--coral-soft);
+  color: var(--coral-ink);
 }
 
 /* ===== gráfica de rendimiento ===== */
