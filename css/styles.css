@@ -181,6 +181,18 @@ textarea {
   padding-left: 35px;
 }
 
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.hint {
+  color: var(--mute);
+  font-size: 11.5px;
+  margin: 5px 0 0;
+}
+
 /* ===== botones ===== */
 
 .btn {
@@ -397,6 +409,11 @@ a.nav:hover {
 .col {
   flex: 1 1 auto;
   min-width: 0;
+}
+
+.side-c {
+  flex: 0 0 auto;
+  width: 336px;
 }
 
 .ib {
@@ -1042,5 +1059,17 @@ input.malo:focus {
 
   .chips {
     flex-wrap: wrap;
+  }
+
+  .side-c {
+    width: 100%;
+  }
+
+  .body {
+    flex-wrap: wrap;
+  }
+
+  .grid2 {
+    grid-template-columns: 1fr;
   }
 }

@@ -69,15 +69,6 @@ function loginFormulario() {
 function enlazarFormulario(monticulo) {
   const aviso = monticulo.querySelector('#aviso');
 
-  function marcar(campo, mensaje) {
-    const error = monticulo.querySelector('#' + campo + '-error');
-    error.textContent = mensaje;
-    error.hidden = !mensaje;
-    const entrada = monticulo.querySelector('#' + campo);
-    entrada.classList.toggle('malo', Boolean(mensaje));
-    entrada.setAttribute('aria-invalid', Boolean(mensaje));
-  }
-
   monticulo.querySelector('#form-login').addEventListener('submit', (evento) => {
     evento.preventDefault();
     const correo = monticulo.querySelector('#correo').value.trim().toLowerCase();
@@ -85,8 +76,8 @@ function enlazarFormulario(monticulo) {
 
     const errorCorreo = Acme.validar.correo(correo);
     const errorClave = Acme.validar.clave(clave);
-    marcar('correo', errorCorreo);
-    marcar('clave', errorClave);
+    Acme.validar.mostrar(monticulo, 'correo', errorCorreo);
+    Acme.validar.mostrar(monticulo, 'clave', errorClave);
     aviso.hidden = true;
     if (errorCorreo || errorClave) {
       return;

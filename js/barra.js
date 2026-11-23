@@ -72,6 +72,7 @@ Acme.montar = (monticulo, pagina) => {
         </header>
         <div class="body">
           <div class="col">${pagina.contenido}</div>
+          ${pagina.lateral ? `<div class="side-c">${pagina.lateral}</div>` : ''}
         </div>
       </main>
     </div>`;
