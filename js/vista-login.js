@@ -22,8 +22,10 @@ const loginMarca = `
   </aside>`;
 
 function loginFormulario() {
+  // Sin novalidate el navegador corta el envío antes de llegar a nuestros
+  // avisos, y un correo mal escrito saldría con su recuadro gris.
   return `
-    <form class="form" id="form-login">
+    <form class="form" id="form-login" novalidate>
       <p class="eyebrow">Acceso al panel</p>
       <h1>Entra con tu correo</h1>
       <p class="sub">Solo pueden entrar usuarios registrados. Si vas a resolver un examen no necesitas cuenta.</p>
