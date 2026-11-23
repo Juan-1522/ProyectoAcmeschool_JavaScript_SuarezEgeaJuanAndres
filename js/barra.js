@@ -68,6 +68,7 @@ Acme.montar = (monticulo, pagina) => {
             <p class="eyebrow">${pagina.eyebrow}</p>
             <h1>${pagina.titulo}</h1>
           </div>
+          ${pagina.acciones ? `<div class="hs">${pagina.acciones}</div>` : ''}
         </header>
         <div class="body">
           <div class="col">${pagina.contenido}</div>

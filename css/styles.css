@@ -121,6 +121,11 @@ code {
   mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><path d='M4.5 12.8l4.8 4.8L19.5 7'/></svg>");
 }
 
+.ic.search {
+  -webkit-mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'><circle cx='10.8' cy='10.8' r='6.2'/><path d='M15.4 15.4L20 20'/></svg>");
+  mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'><circle cx='10.8' cy='10.8' r='6.2'/><path d='M15.4 15.4L20 20'/></svg>");
+}
+
 /* ===== campos ===== */
 
 .field {
@@ -366,6 +371,21 @@ a.nav:hover {
   border-bottom: 1px solid var(--line);
 }
 
+.head .hs {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.srch {
+  width: 250px;
+}
+
+.srchw .ic {
+  top: 13px;
+}
+
 .body {
   padding: 26px 30px 30px;
   display: flex;
@@ -491,6 +511,41 @@ a.nav:hover {
 
 .card > .ch .sub {
   font-size: 12.5px;
+}
+
+.card > .ch .r {
+  margin-left: auto;
+}
+
+.chips {
+  display: flex;
+  gap: 7px;
+}
+
+.chipbtn {
+  align-items: center;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--ink-2);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 12.5px;
+  font-weight: 750;
+  gap: 7px;
+  padding: 5px 13px;
+}
+
+.chipbtn.on {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: #fff;
+}
+
+td.vacio {
+  color: var(--mute);
+  padding: 26px 0;
+  text-align: center;
 }
 
 .tw {
@@ -966,5 +1021,26 @@ input.malo:focus {
 
   .tiles {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .head {
+    flex-wrap: wrap;
+  }
+
+  .head .hs {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .srch {
+    width: 100%;
+  }
+
+  .card > .ch {
+    flex-wrap: wrap;
+  }
+
+  .chips {
+    flex-wrap: wrap;
   }
 }
