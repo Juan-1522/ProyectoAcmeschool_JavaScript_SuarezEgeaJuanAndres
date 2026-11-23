@@ -679,11 +679,23 @@ td .person .av {
   font-size: 11px;
 }
 
-td .person small {
+td .person small,
+td .ex small {
   display: block;
   color: var(--mute);
   font-size: 11.5px;
   font-weight: 600;
+}
+
+/* La descripción es lo único del examen que puede quedar largo, así que aquí
+   sí se deja saltar de línea y se le pone tope para que la tabla quepa. */
+td .ex small {
+  white-space: normal;
+  max-width: 250px;
+}
+
+td .ex .pill {
+  margin-left: 6px;
 }
 
 td .sm {
@@ -1107,6 +1119,10 @@ input.malo:focus {
   .head .hs {
     margin-left: 0;
     width: 100%;
+  }
+
+  .srchw {
+    flex: 1 1 auto;
   }
 
   .srch {

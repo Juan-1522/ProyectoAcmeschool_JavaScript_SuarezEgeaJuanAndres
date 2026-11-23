@@ -24,12 +24,6 @@ const sellos = [
   { etiqueta: 'Administrativos', cargo: 'Administrativo' }
 ];
 
-// Se quitan los acentos para que escribir "avila" encuentre a "Héctor Manuel
-// Ávila" sin tener que respetar las mayúsculas ni las tildes.
-function normalizar(valor) {
-  return valor.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-}
-
 function seleccionados() {
   const texto = normalizar(filtro.texto.trim());
 

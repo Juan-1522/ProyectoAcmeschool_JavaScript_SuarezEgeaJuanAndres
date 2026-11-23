@@ -9,6 +9,13 @@ function iniciales(nombre) {
     .join('');
 }
 
+// Se quitan los acentos para que escribir "avila" encuentre a "Héctor Manuel
+// Ávila" sin tener que respetar las mayúsculas ni las tildes. Lo usan el
+// buscador de usuarios y el de exámenes.
+function normalizar(valor) {
+  return valor.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
 // Cada fila de la barra es un módulo que ya tiene vista. La cantidad se calcula
 // al pintar, para que el número cambie cuando se agrega o se elimina algo.
 const modulos = [
@@ -18,6 +25,12 @@ const modulos = [
     icono: 'users',
     texto: 'Usuarios',
     cantidad: () => Acme.estado.usuarios.length
+  },
+  {
+    ruta: '#/examenes',
+    icono: 'doc',
+    texto: 'Exámenes',
+    cantidad: () => Acme.estado.examenes.length
   }
 ];
 

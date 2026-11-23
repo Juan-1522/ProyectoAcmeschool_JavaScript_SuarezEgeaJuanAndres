@@ -5,7 +5,8 @@ const pantalla = document.getElementById('app');
 // acceso, y un hash que no está en la tabla termina en el panel.
 const rutas = {
   '#/panel': { vista: 'panel', privado: true },
-  '#/usuarios': { vista: 'usuarios', privado: true }
+  '#/usuarios': { vista: 'usuarios', privado: true },
+  '#/examenes': { vista: 'examenes', privado: true }
 };
 
 Acme.mostrar = () => {
