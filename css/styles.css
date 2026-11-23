@@ -126,6 +126,11 @@ code {
   mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'><circle cx='10.8' cy='10.8' r='6.2'/><path d='M15.4 15.4L20 20'/></svg>");
 }
 
+.ic.pencil {
+  -webkit-mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linejoin='round'><path d='M4 20h4.2L20 8.2 15.8 4 4 15.8z'/></svg>");
+  mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linejoin='round'><path d='M4 20h4.2L20 8.2 15.8 4 4 15.8z'/></svg>");
+}
+
 /* ===== campos ===== */
 
 .field {
@@ -416,6 +421,12 @@ a.nav:hover {
   width: 336px;
 }
 
+.iact {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
 .ib {
   width: 30px;
   height: 30px;
@@ -433,6 +444,11 @@ a.nav:hover {
 .ib .ic {
   width: 15px;
   height: 15px;
+}
+
+.ib:hover {
+  border-color: #b7c9dd;
+  color: var(--petrol);
 }
 
 /* ===== resumen ===== */
@@ -569,6 +585,20 @@ td.vacio {
   overflow-x: auto;
 }
 
+/* Con la columna de acciones la tabla de usuarios ya no cabía entera en 1440;
+   quitarle respiro a los lados de cada celda la deja visible sin scroll. */
+.tw.compact th,
+.tw.compact td {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+/* La última columna va pegada al borde del contenido, sin el respiro derecho. */
+.tw.compact th.acc,
+.tw.compact td.acc {
+  padding-right: 0;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -605,6 +635,19 @@ td {
 
 tbody tr:hover {
   background: #f8fbfe;
+}
+
+/* La fila en edición se queda sombreada aunque el puntero pase por encima,
+   para no perder de vista a quién pertenece el formulario de la derecha. */
+tbody tr.sel,
+tbody tr.sel:hover {
+  background: var(--petrol-soft);
+}
+
+th.acc,
+td.acc {
+  text-align: right;
+  padding-right: 0;
 }
 
 td .person {

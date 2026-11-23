@@ -8,6 +8,16 @@ const filtro = { texto: '', cargo: '' };
 // porque la página entera se vuelve a montar después de guardar.
 let aviso = null;
 
+// Identificación de la persona que se está editando; mientras valga algo, el
+// formulario de la derecha muestra sus datos en vez de estar en blanco.
+let editando = null;
+
+function usuarioEnEdicion() {
+  return editando
+    ? Acme.estado.usuarios.find((uno) => uno.id === editando) || null
+    : null;
+}
+
 const sellos = [
   { etiqueta: 'Todos', cargo: '' },
   { etiqueta: 'Docentes', cargo: 'Docente' },
@@ -40,14 +50,14 @@ function filas(lista) {
   if (!lista.length) {
     return `
       <tr>
-        <td class="vacio" colspan="5">
+        <td class="vacio" colspan="6">
           Ningún usuario coincide con ${filtro.texto.trim() ? '"' + filtro.texto.trim() + '"' : 'ese filtro'}.
         </td>
       </tr>`;
   }
 
   return lista.map((uno) => `
-    <tr>
+    <tr${uno.id === editando ? ' class="sel"' : ''}>
       <td class="code">${uno.id}</td>
       <td>
         <div class="person">
@@ -58,6 +68,13 @@ function filas(lista) {
       <td class="sm">${uno.correo}</td>
       <td class="sm">${uno.telefono}</td>
       <td><span class="pill ${uno.cargo === 'Docente' ? 'doc' : 'adm'}">${uno.cargo}</span></td>
+      <td class="acc">
+        <div class="iact">
+          <button class="ib" type="button" data-edita="${uno.id}" aria-label="Editar a ${uno.nombre}">
+            <i class="ic pencil"></i>
+          </button>
+        </div>
+      </td>
     </tr>`).join('');
 }
 
@@ -106,13 +123,15 @@ function campo(id, etiqueta, atributos, extra) {
       </div>`;
 }
 
-function formulario() {
+function formulario(uno) {
+  const edicion = Boolean(uno);
+
   return `
     <div class="card">
       <div class="ch">
         <div>
-          <h3>Crear usuario</h3>
-          <p class="sub">Queda guardado en este navegador</p>
+          <h3>${edicion ? 'Actualizar usuario' : 'Crear usuario'}</h3>
+          <p class="sub">${edicion ? 'Editando la identificación ' + uno.id : 'Queda guardado en este navegador'}</p>
         </div>
       </div>
 
@@ -121,22 +140,25 @@ function formulario() {
 
       <form id="form-crear" novalidate>
         <div class="grid2">
-          ${campo('nuevo-id', 'Identificación', 'type="text" inputmode="numeric" autocomplete="off" placeholder="1020345876"')}
-          ${campo('nuevo-telefono', 'Teléfono', 'type="tel" inputmode="tel" autocomplete="off" placeholder="300 555 1122"')}
+          ${campo('dato-id', 'Identificación', 'type="text" inputmode="numeric" autocomplete="off" placeholder="1020345876"')}
+          ${campo('dato-telefono', 'Teléfono', 'type="tel" inputmode="tel" autocomplete="off" placeholder="300 555 1122"')}
         </div>
-        ${campo('nuevo-nombre', 'Nombre completo', 'type="text" autocomplete="name" placeholder="Ana María Torres"')}
-        ${campo('nuevo-correo', 'Correo electrónico', 'type="email" autocomplete="off" placeholder="ana.torres@acme.edu"', '<i class="ic mail"></i>')}
+        ${campo('dato-nombre', 'Nombre completo', 'type="text" autocomplete="name" placeholder="Ana María Torres"')}
+        ${campo('dato-correo', 'Correo electrónico', 'type="email" autocomplete="off" placeholder="ana.torres@acme.edu"', '<i class="ic mail"></i>')}
         <div class="field">
-          <label for="nuevo-cargo">Cargo</label>
-          <select id="nuevo-cargo" name="nuevo-cargo">
+          <label for="dato-cargo">Cargo</label>
+          <select id="dato-cargo" name="dato-cargo">
             <option>Administrativo</option>
             <option>Docente</option>
           </select>
         </div>
-        ${campo('nuevo-clave', 'Contraseña', 'type="password" autocomplete="new-password"')}
-        <p class="hint">Con esa contraseña entra al panel, así que debe tener al menos 6 caracteres.</p>
+        ${campo('dato-clave', 'Contraseña', `type="password" autocomplete="${edicion ? 'off' : 'new-password'}"${edicion ? ' placeholder="Sin cambios"' : ''}`)}
+        <p class="hint">${edicion
+          ? 'Si no escribes nada aquí, la contraseña sigue siendo la misma.'
+          : 'Con esa contraseña entra al panel, así que debe tener al menos 6 caracteres.'}</p>
         <div class="btnrow">
-          <button class="btn pri" type="submit">Guardar usuario</button>
+          <button class="btn pri" type="submit">${edicion ? 'Actualizar usuario' : 'Guardar usuario'}</button>
+          ${edicion ? '<button class="btn sec" type="button" id="cancelar-edicion">Cancelar</button>' : ''}
         </div>
       </form>
     </div>`;
@@ -161,7 +183,7 @@ Acme.vistas.usuarios = (monticulo) => {
           <div id="info">${encabezado(seleccionados(), totales())}</div>
           <div class="r chips" id="chips">${chips()}</div>
         </div>
-        <div class="tw">
+        <div class="tw compact">
           <table>
             <thead>
               <tr>
@@ -170,17 +192,32 @@ Acme.vistas.usuarios = (monticulo) => {
                 <th>Correo</th>
                 <th>Teléfono</th>
                 <th>Cargo</th>
+                <th class="acc">Acciones</th>
               </tr>
             </thead>
             <tbody id="cuerpo">${filas(seleccionados())}</tbody>
           </table>
         </div>
       </div>`,
-    lateral: formulario()
+    lateral: formulario(usuarioEnEdicion())
   });
 
   const buscar = monticulo.querySelector('#buscar');
   buscar.value = filtro.texto;
+
+  // Los datos de quien se edita se copian desde JavaScript para no escapar
+  // nombres con comillas ni tildes dentro del HTML del formulario.
+  const enEdicion = usuarioEnEdicion();
+  if (enEdicion) {
+    const poner = (campo, valor) => {
+      monticulo.querySelector('#dato-' + campo).value = valor;
+    };
+    poner('id', enEdicion.id);
+    poner('nombre', enEdicion.nombre);
+    poner('correo', enEdicion.correo);
+    poner('telefono', enEdicion.telefono);
+    poner('cargo', enEdicion.cargo);
+  }
 
   const pintar = () => {
     const lista = seleccionados();
@@ -202,6 +239,28 @@ Acme.vistas.usuarios = (monticulo) => {
     filtro.cargo = boton.dataset.cargo;
     pintar();
   });
+
+  // El lápiz vive en filas que se vuelven a pintar con el buscador, así que el
+  // aviso se pone en el cuerpo de la tabla y no en cada botón.
+  monticulo.querySelector('#cuerpo').addEventListener('click', (evento) => {
+    const boton = evento.target.closest('[data-edita]');
+    if (!boton) {
+      return;
+    }
+    editando = boton.dataset.edita;
+    aviso = null;
+    Acme.vistas.usuarios(monticulo);
+    monticulo.querySelector('#dato-nombre').focus();
+  });
+
+  const cancelar = monticulo.querySelector('#cancelar-edicion');
+  if (cancelar) {
+    cancelar.addEventListener('click', () => {
+      editando = null;
+      aviso = null;
+      Acme.vistas.usuarios(monticulo);
+    });
+  }
 
   const cajaAviso = monticulo.querySelector('#aviso-crear');
   const formularioNuevo = monticulo.querySelector('#form-crear');
@@ -225,11 +284,13 @@ Acme.vistas.usuarios = (monticulo) => {
     const valor = (campoId) => monticulo.querySelector('#' + campoId).value;
 
     const mensajes = {
-      'nuevo-id': Acme.validar.cedula(valor('nuevo-id')),
-      'nuevo-nombre': Acme.validar.nombre(valor('nuevo-nombre')),
-      'nuevo-correo': Acme.validar.correo(valor('nuevo-correo'), 'Escribe el correo del usuario.'),
-      'nuevo-telefono': Acme.validar.telefono(valor('nuevo-telefono')),
-      'nuevo-clave': Acme.validar.claveNueva(valor('nuevo-clave'))
+      'dato-id': Acme.validar.cedula(valor('dato-id')),
+      'dato-nombre': Acme.validar.nombre(valor('dato-nombre')),
+      'dato-correo': Acme.validar.correo(valor('dato-correo'), 'Escribe el correo del usuario.'),
+      'dato-telefono': Acme.validar.telefono(valor('dato-telefono')),
+      // En edición la contraseña puede quedar vacía, y eso quiere decir que no
+      // se cambia, así que ahí no se le exige longitud.
+      'dato-clave': enEdicion && !valor('dato-clave') ? '' : Acme.validar.claveNueva(valor('dato-clave'))
     };
 
     Object.entries(mensajes).forEach(([campoId, texto]) => {
@@ -242,34 +303,42 @@ Acme.vistas.usuarios = (monticulo) => {
       return;
     }
 
-    const identificacion = valor('nuevo-id').trim();
-    const correo = valor('nuevo-correo').trim().toLowerCase();
+    const identificacion = valor('dato-id').trim();
+    const correo = valor('dato-correo').trim().toLowerCase();
 
-    const dueño = Acme.estado.usuarios.find((uno) => uno.id === identificacion);
+    const dueño = Acme.estado.usuarios.find((uno) => uno !== enEdicion && uno.id === identificacion);
     if (dueño) {
       aviso = { tipo: 'no', texto: 'La identificación ' + identificacion + ' ya es de ' + dueño.nombre + '.' };
       pintarAviso();
       return;
     }
-    if (Acme.estado.usuarios.some((uno) => uno.correo === correo)) {
-      aviso = { tipo: 'no', texto: 'Ese correo ya lo tiene ' + Acme.estado.usuarios.find((uno) => uno.correo === correo).nombre + '.' };
+    const repetido = Acme.estado.usuarios.find((uno) => uno !== enEdicion && uno.correo === correo);
+    if (repetido) {
+      aviso = { tipo: 'no', texto: 'Ese correo ya lo tiene ' + repetido.nombre + '.' };
       pintarAviso();
       return;
     }
 
-    const nuevo = {
+    const datos = {
       id: identificacion,
-      nombre: valor('nuevo-nombre').trim(),
+      nombre: valor('dato-nombre').trim(),
       correo: correo,
-      telefono: valor('nuevo-telefono').trim(),
-      cargo: valor('nuevo-cargo'),
-      clave: valor('nuevo-clave')
+      telefono: valor('dato-telefono').trim(),
+      cargo: valor('dato-cargo'),
+      clave: valor('dato-clave') || (enEdicion ? enEdicion.clave : '')
     };
 
-    Acme.estado.usuarios.push(nuevo);
+    if (enEdicion) {
+      Object.assign(enEdicion, datos);
+      aviso = { tipo: 'ok', texto: 'Se guardaron los datos de ' + datos.nombre + '.' };
+      editando = null;
+    } else {
+      Acme.estado.usuarios.push(datos);
+      aviso = { tipo: 'ok', texto: datos.nombre + ' ya está registrado.' };
+    }
+
     Acme.estado.guardar('usuarios');
 
-    aviso = { tipo: 'ok', texto: nuevo.nombre + ' ya está registrado.' };
     Acme.vistas.usuarios(monticulo);
   });
 };
