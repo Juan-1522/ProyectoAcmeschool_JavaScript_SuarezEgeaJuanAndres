@@ -73,6 +73,9 @@ function filas(lista) {
           <button class="ib" type="button" data-edita="${uno.id}" aria-label="Editar a ${uno.nombre}">
             <i class="ic pencil"></i>
           </button>
+          <button class="ib del" type="button" data-borra="${uno.id}" aria-label="Eliminar a ${uno.nombre}">
+            <i class="ic trash"></i>
+          </button>
         </div>
       </td>
     </tr>`).join('');
@@ -240,17 +243,42 @@ Acme.vistas.usuarios = (monticulo) => {
     pintar();
   });
 
-  // El lápiz vive en filas que se vuelven a pintar con el buscador, así que el
-  // aviso se pone en el cuerpo de la tabla y no en cada botón.
+  // El lápiz y la papelera viven en filas que se vuelven a pintar con el
+  // buscador, así que el aviso se pone en el cuerpo de la tabla y no en cada botón.
   monticulo.querySelector('#cuerpo').addEventListener('click', (evento) => {
-    const boton = evento.target.closest('[data-edita]');
-    if (!boton) {
+    const botonEditar = evento.target.closest('[data-edita]');
+    if (botonEditar) {
+      editando = botonEditar.dataset.edita;
+      aviso = null;
+      Acme.vistas.usuarios(monticulo);
+      monticulo.querySelector('#dato-nombre').focus();
       return;
     }
-    editando = boton.dataset.edita;
-    aviso = null;
+
+    const botonBorrar = evento.target.closest('[data-borra]');
+    if (!botonBorrar) {
+      return;
+    }
+    const lugar = Acme.estado.usuarios.findIndex((uno) => uno.id === botonBorrar.dataset.borra);
+    const uno = Acme.estado.usuarios[lugar];
+    const propio = Acme.sesion.actual() && Acme.sesion.actual().id === uno.id;
+
+    if (propio) {
+      aviso = { tipo: 'no', texto: 'Tu propia cuenta es la que está adentro, no se puede eliminar.' };
+      Acme.vistas.usuarios(monticulo);
+      return;
+    }
+    if (!window.confirm('¿Eliminar a ' + uno.nombre + '? Deja de aparecer en la lista.')) {
+      return;
+    }
+
+    Acme.estado.usuarios.splice(lugar, 1);
+    if (editando === uno.id) {
+      editando = null;
+    }
+    Acme.estado.guardar('usuarios');
+    aviso = { tipo: 'ok', texto: 'Se eliminó a ' + uno.nombre + '.' };
     Acme.vistas.usuarios(monticulo);
-    monticulo.querySelector('#dato-nombre').focus();
   });
 
   const cancelar = monticulo.querySelector('#cancelar-edicion');

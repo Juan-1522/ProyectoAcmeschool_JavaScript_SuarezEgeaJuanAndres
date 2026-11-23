@@ -126,6 +126,11 @@ code {
   mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'><circle cx='10.8' cy='10.8' r='6.2'/><path d='M15.4 15.4L20 20'/></svg>");
 }
 
+.ic.trash {
+  -webkit-mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round'><path d='M4 7h16M9.5 7V4h5v3M6.5 7l1 13h9l1-13M10.5 11v5M13.5 11v5'/></svg>");
+  mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round'><path d='M4 7h16M9.5 7V4h5v3M6.5 7l1 13h9l1-13M10.5 11v5M13.5 11v5'/></svg>");
+}
+
 .ic.pencil {
   -webkit-mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linejoin='round'><path d='M4 20h4.2L20 8.2 15.8 4 4 15.8z'/></svg>");
   mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linejoin='round'><path d='M4 20h4.2L20 8.2 15.8 4 4 15.8z'/></svg>");
@@ -418,7 +423,7 @@ a.nav:hover {
 
 .side-c {
   flex: 0 0 auto;
-  width: 336px;
+  width: 320px;
 }
 
 .iact {
@@ -449,6 +454,18 @@ a.nav:hover {
 .ib:hover {
   border-color: #b7c9dd;
   color: var(--petrol);
+}
+
+/* La papelera se distingue por color, no solo por el dibujo del icono. */
+.ib.del {
+  color: var(--no);
+  border-color: #f2d7d5;
+  background: #fef8f7;
+}
+
+.ib.del:hover {
+  border-color: #e3b6b3;
+  color: #a02626;
 }
 
 /* ===== resumen ===== */
