@@ -365,10 +365,17 @@ ${avisoCaja('aviso-examen')}
       }
       const lugar = Acme.estado.examenes.findIndex((examen) => examen.codigo === borrar.dataset.borra);
       const uno = Acme.estado.examenes[lugar];
-      if (!window.confirm('¿Eliminar ' + uno.codigo + ' "' + uno.titulo + '"? Deja de aparecer en la lista.')) {
+      const usados = Acme.estado.intentos.filter((intento) => intento.codigo === uno.codigo).length;
+      const detalle = usados === 0
+        ? 'Deja de aparecer en la lista.'
+        : 'Se ' + (usados === 1 ? 'quita' : 'quitan') + ' también su' + (usados === 1 ? ' intento.' : 's intentos.');
+      if (!window.confirm('¿Eliminar ' + uno.codigo + ' "' + uno.titulo + '"? ' + detalle)) {
         return;
       }
       Acme.estado.examenes.splice(lugar, 1);
+      // Los intentos se van con el examen: la nota se calcula con sus preguntas,
+      // así que sin examen no hay forma de mostrarlos.
+      Acme.estado.intentos = Acme.estado.intentos.filter((intento) => intento.codigo !== uno.codigo);
       if (editando === uno.codigo) {
         // El formulario tenía justo ese examen delante, así que se cierra: dejarlo
         // abierto con sus preguntas serviría para crear un examen con lo ajeno.
@@ -377,7 +384,12 @@ ${avisoCaja('aviso-examen')}
         preguntas = [];
       }
       Acme.estado.guardar('examenes');
-      aviso = { tipo: 'ok', texto: 'Se eliminó ' + uno.codigo + ' "' + uno.titulo + '".' };
+      Acme.estado.guardar('intentos');
+      aviso = {
+        tipo: 'ok',
+        texto: 'Se eliminó ' + uno.codigo + ' "' + uno.titulo + '"' +
+          (usados ? ', con su' + (usados === 1 ? ' intento.' : 's ' + usados + ' intentos.') : '.')
+      };
       Acme.vistas.examenes(monticulo);
     });
 

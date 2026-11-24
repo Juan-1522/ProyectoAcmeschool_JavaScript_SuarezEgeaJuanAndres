@@ -31,8 +31,10 @@ Acme.vistas.panel = (monticulo) => {
       </div>`;
   }).join('');
 
+  // Un intento de un examen que ya no está no tiene nota que calcular, así que
+  // no entra en la tabla.
   const intentos = Acme.estado.intentos
-    .slice()
+    .filter((intento) => examenes.some((examen) => examen.codigo === intento.codigo))
     .sort((uno, otro) => otro.fecha.localeCompare(uno.fecha))
     .slice(0, 3);
 
