@@ -16,11 +16,26 @@ Acme.vistas = Acme.vistas || {};
   const plurales = { Publicado: 'publicados', Borrador: 'en borrador' };
 
   // El formulario no está montado siempre: la tabla necesita todo el ancho para
-  // que las cinco columnas quepan sin scroll, así que solo aparece cuando se pide.
+  // que las seis columnas quepan sin scroll, así que solo aparece cuando se pide.
   let creando = false;
 
   // Sobrevive al re-renderizado que vacía el formulario después de guardar.
   let aviso = null;
+
+  // Código del examen que se está editando. Se guarda el código y no el objeto
+  // porque al volver a montar la vista hay que ir a buscarlo de nuevo en la lista.
+  let editando = null;
+
+  function examenEnEdicion() {
+    return editando
+      ? Acme.estado.examenes.find((examen) => examen.codigo === editando) || null
+      : null;
+  }
+
+  function avisoCaja(id) {
+    return `
+        <p class="aviso ${aviso ? aviso.tipo : 'no'}" id="${id}" ${aviso ? '' : 'hidden'}>${aviso ? aviso.texto : ''}</p>`;
+  }
 
   // Se llama igual que la de usuarios y no choca porque esta queda dentro de la
   // llamada de arriba; la global solo la ve el archivo de usuarios.
@@ -41,6 +56,16 @@ Acme.vistas = Acme.vistas || {};
   function preguntaVacia() {
     // Dos respuestas como mínimo: con una sola no hay forma de equivocarse.
     return { enunciado: '', respuestas: ['', ''], correcta: -1 };
+  }
+
+  // Lo guardado lleva la correcta dentro de cada respuesta y el editor la lleva
+  // aparte, así que al abrir un examen hay que separar los dos datos.
+  function desdeGuardadas(lista) {
+    return lista.map((pregunta) => ({
+      enunciado: pregunta.enunciado,
+      respuestas: pregunta.respuestas.map((una) => una.texto),
+      correcta: pregunta.respuestas.findIndex((una) => una.correcta)
+    }));
   }
 
   function bloquePregunta(pregunta, numero) {
@@ -79,18 +104,18 @@ Acme.vistas = Acme.vistas || {};
       </div>`;
   }
 
-  function formulario() {
+  function formulario(uno) {
+    const edicion = Boolean(uno);
+
     return `
       <div class="card">
         <div class="ch">
           <div>
-            <h3>Nuevo examen</h3>
-            <p class="sub">Queda guardado en este navegador</p>
+            <h3>${edicion ? 'Actualizar examen' : 'Nuevo examen'}</h3>
+            <p class="sub">${edicion ? 'Editando el código ' + uno.codigo : 'Queda guardado en este navegador'}</p>
           </div>
         </div>
-
-        <p class="aviso ${aviso ? aviso.tipo : 'no'}" id="aviso-examen"
-          ${aviso ? '' : 'hidden'}>${aviso ? aviso.texto : ''}</p>
+${avisoCaja('aviso-examen')}
 
         <form id="form-examen" novalidate>
           <div class="grid2">
@@ -109,8 +134,8 @@ Acme.vistas = Acme.vistas || {};
             <div class="field">
               <label for="dato-estado">Estado</label>
               <select id="dato-estado" name="dato-estado">
-                <option>Borrador</option>
-                <option>Publicado</option>
+                <option${!edicion || uno.estado === 'Borrador' ? ' selected' : ''}>Borrador</option>
+                <option${edicion && uno.estado === 'Publicado' ? ' selected' : ''}>Publicado</option>
               </select>
             </div>
           </div>
@@ -125,7 +150,7 @@ Acme.vistas = Acme.vistas || {};
           <div id="lista-preguntas"></div>
 
           <div class="btnrow">
-            <button class="btn pri" type="submit">Guardar examen</button>
+            <button class="btn pri" type="submit">${edicion ? 'Actualizar examen' : 'Guardar examen'}</button>
             <button class="btn sec" type="button" id="cancelar-examen">Cancelar</button>
           </div>
         </form>
@@ -152,14 +177,14 @@ Acme.vistas = Acme.vistas || {};
     if (!lista.length) {
       return `
         <tr>
-          <td class="vacio" colspan="5">
+          <td class="vacio" colspan="6">
             Ningún examen coincide con ${filtro.texto.trim() ? '"' + filtro.texto.trim() + '"' : 'ese filtro'}.
           </td>
         </tr>`;
     }
 
     return lista.map((examen) => `
-      <tr>
+      <tr${examen.codigo === editando ? ' class="sel"' : ''}>
         <td class="code">${examen.codigo}</td>
         <td>
           <div class="ex">
@@ -170,6 +195,22 @@ Acme.vistas = Acme.vistas || {};
         <td class="sm">${examen.tiempo} min</td>
         <td class="sm">${examen.aprobacion} %</td>
         <td class="sm">${examen.preguntas.length}</td>
+        <td class="acc">
+          <div class="iact">
+            <button class="ib" type="button" data-edita="${examen.codigo}"
+              aria-label="Editar ${examen.titulo}">
+              <i class="ic pencil"></i>
+            </button>
+            <button class="ib" type="button" data-vuelve="${examen.codigo}"
+              aria-label="${examen.estado === 'Publicado' ? 'Devolver ' + examen.titulo + ' a borrador' : 'Publicar ' + examen.titulo}">
+              <i class="ic ${examen.estado === 'Publicado' ? 'eye-off' : 'eye'}"></i>
+            </button>
+            <button class="ib del" type="button" data-borra="${examen.codigo}"
+              aria-label="Eliminar ${examen.titulo}">
+              <i class="ic trash"></i>
+            </button>
+          </div>
+        </td>
       </tr>`).join('');
   }
 
@@ -225,6 +266,7 @@ Acme.vistas = Acme.vistas || {};
         </button>`}`,
       contenido: `
         <div class="card">
+          ${creando ? '' : avisoCaja('aviso-lista')}
           <div class="ch">
             <div id="info">${encabezado(seleccionados(), totales())}</div>
             <div class="r chips" id="chips">${chips()}</div>
@@ -238,17 +280,33 @@ Acme.vistas = Acme.vistas || {};
                   <th>Tiempo</th>
                   <th>Aprobación</th>
                   <th>Preguntas</th>
+                  <th class="acc">Acciones</th>
                 </tr>
               </thead>
               <tbody id="cuerpo">${filas(seleccionados())}</tbody>
             </table>
           </div>
         </div>`,
-      lateral: creando ? formulario() : ''
+      lateral: creando ? formulario(examenEnEdicion()) : ''
     });
 
     const buscar = monticulo.querySelector('#buscar');
     buscar.value = filtro.texto;
+
+    // Los datos del examen que se edita se copian desde JavaScript, igual que las
+    // preguntas: un título con comillas dentro del HTML arma un formulario roto.
+    const enEdicion = examenEnEdicion();
+    if (enEdicion) {
+      const poner = (campoId, valor) => {
+        monticulo.querySelector('#' + campoId).value = valor;
+      };
+      poner('dato-codigo', enEdicion.codigo);
+      poner('dato-tiempo', enEdicion.tiempo);
+      poner('dato-titulo', enEdicion.titulo);
+      poner('dato-desc', enEdicion.descripcion);
+      poner('dato-aprobacion', enEdicion.aprobacion);
+      poner('dato-estado', enEdicion.estado);
+    }
 
     const pintar = () => {
       const lista = seleccionados();
@@ -271,12 +329,65 @@ Acme.vistas = Acme.vistas || {};
       pintar();
     });
 
+    // El lápiz, el ojo y la papelera viven en filas que se repintan con el
+    // buscador, así que el aviso se escucha en el cuerpo de la tabla.
+    monticulo.querySelector('#cuerpo').addEventListener('click', (evento) => {
+      const editar = evento.target.closest('[data-edita]');
+      if (editar) {
+        const uno = Acme.estado.examenes.find((examen) => examen.codigo === editar.dataset.edita);
+        editando = uno.codigo;
+        creando = true;
+        aviso = null;
+        preguntas = desdeGuardadas(uno.preguntas);
+        Acme.vistas.examenes(monticulo);
+        monticulo.querySelector('#dato-titulo').focus();
+        return;
+      }
+
+      const volver = evento.target.closest('[data-vuelve]');
+      if (volver) {
+        const uno = Acme.estado.examenes.find((examen) => examen.codigo === volver.dataset.vuelve);
+        if (uno.estado === 'Borrador' && !uno.preguntas.length) {
+          aviso = { tipo: 'no', texto: uno.codigo + ' no tiene preguntas todavía. Ábrelo con el lápiz y agrega la primera.' };
+          Acme.vistas.examenes(monticulo);
+          return;
+        }
+        uno.estado = uno.estado === 'Publicado' ? 'Borrador' : 'Publicado';
+        Acme.estado.guardar('examenes');
+        aviso = { tipo: 'ok', texto: uno.codigo + ' ' + (uno.estado === 'Publicado' ? 'quedó publicado.' : 'volvió a borrador.') };
+        Acme.vistas.examenes(monticulo);
+        return;
+      }
+
+      const borrar = evento.target.closest('[data-borra]');
+      if (!borrar) {
+        return;
+      }
+      const lugar = Acme.estado.examenes.findIndex((examen) => examen.codigo === borrar.dataset.borra);
+      const uno = Acme.estado.examenes[lugar];
+      if (!window.confirm('¿Eliminar ' + uno.codigo + ' "' + uno.titulo + '"? Deja de aparecer en la lista.')) {
+        return;
+      }
+      Acme.estado.examenes.splice(lugar, 1);
+      if (editando === uno.codigo) {
+        // El formulario tenía justo ese examen delante, así que se cierra: dejarlo
+        // abierto con sus preguntas serviría para crear un examen con lo ajeno.
+        editando = null;
+        creando = false;
+        preguntas = [];
+      }
+      Acme.estado.guardar('examenes');
+      aviso = { tipo: 'ok', texto: 'Se eliminó ' + uno.codigo + ' "' + uno.titulo + '".' };
+      Acme.vistas.examenes(monticulo);
+    });
+
     const nuevo = monticulo.querySelector('#nuevo');
     if (nuevo) {
       nuevo.addEventListener('click', () => {
         creando = true;
         aviso = null;
         preguntas = [];
+        editando = null;
         Acme.vistas.examenes(monticulo);
         monticulo.querySelector('#dato-codigo').focus();
       });
@@ -378,6 +489,7 @@ Acme.vistas = Acme.vistas || {};
       creando = false;
       aviso = null;
       preguntas = [];
+      editando = null;
       Acme.vistas.examenes(monticulo);
     });
 
@@ -416,7 +528,7 @@ Acme.vistas = Acme.vistas || {};
       }
 
       const codigo = valor('dato-codigo').trim().toUpperCase();
-      const dueño = Acme.estado.examenes.find((uno) => uno.codigo === codigo);
+      const dueño = Acme.estado.examenes.find((uno) => uno !== enEdicion && uno.codigo === codigo);
       if (dueño) {
         aviso = { tipo: 'no', texto: 'El código ' + codigo + ' ya lo usa "' + dueño.titulo + '".' };
         pintarAviso();
@@ -461,8 +573,7 @@ Acme.vistas = Acme.vistas || {};
       }
 
       const estado = valor('dato-estado');
-
-      Acme.estado.examenes.push({
+      const datos = {
         codigo,
         titulo: valor('dato-titulo').trim(),
         descripcion: valor('dato-desc').trim(),
@@ -470,13 +581,23 @@ Acme.vistas = Acme.vistas || {};
         aprobacion: Number(valor('dato-aprobacion')),
         estado,
         preguntas: limpias
-      });
+      };
+
+      // En edición se rellena el objeto que ya está en la lista, y así el examen
+      // no se va al final cuando el código nuevo lo ordena en otro puesto.
+      if (enEdicion) {
+        Object.assign(enEdicion, datos);
+        editando = null;
+      } else {
+        Acme.estado.examenes.push(datos);
+      }
       Acme.estado.guardar('examenes');
 
       preguntas = [];
       aviso = {
         tipo: 'ok',
-        texto: codigo + ' quedó ' + (estado === 'Publicado' ? 'publicado' : 'en borrador') +
+        texto: codigo + (enEdicion ? ' se actualizó y queda ' : ' quedó ') +
+          (estado === 'Publicado' ? 'publicado' : 'en borrador') +
           (limpias.length
             ? ' con ' + limpias.length + (limpias.length === 1 ? ' pregunta.' : ' preguntas.')
             : '.')
