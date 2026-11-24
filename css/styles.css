@@ -136,6 +136,11 @@ code {
   mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linejoin='round'><path d='M4 20h4.2L20 8.2 15.8 4 4 15.8z'/></svg>");
 }
 
+.ic.plus {
+  -webkit-mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'><path d='M12 5.5v13M5.5 12h13'/></svg>");
+  mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'><path d='M12 5.5v13M5.5 12h13'/></svg>");
+}
+
 /* ===== campos ===== */
 
 .field {
@@ -215,6 +220,7 @@ textarea {
   border-radius: 10px;
   font-size: 13.5px;
   font-weight: 700;
+  white-space: nowrap;
   cursor: pointer;
   transition: background-color .18s ease, border-color .18s ease, transform .18s ease;
 }
@@ -1004,11 +1010,13 @@ td .code {
   margin-top: 5px;
 }
 
-input.malo {
+/* La descripción es un textarea, así que el borde rojo tiene que llegarle igual
+   que a las cajas normales. */
+input.malo, textarea.malo {
   border-color: var(--no);
 }
 
-input.malo:focus {
+input.malo:focus, textarea.malo:focus {
   box-shadow: 0 0 0 3px rgba(194, 47, 47, .14);
 }
 
@@ -1119,10 +1127,13 @@ input.malo:focus {
   .head .hs {
     margin-left: 0;
     width: 100%;
+    flex-wrap: wrap;
   }
 
+  /* El buscador se queda solo en su línea: si comparte la fila con el botón de
+     examen, la caja baja a 191 px y el texto de ejemplo se corta. */
   .srchw {
-    flex: 1 1 auto;
+    flex: 1 1 100%;
   }
 
   .srch {

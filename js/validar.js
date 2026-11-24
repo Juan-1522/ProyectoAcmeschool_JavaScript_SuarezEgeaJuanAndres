@@ -63,6 +63,59 @@ Acme.validar = {
     return '';
   },
 
+  // El código se escribe como venga: aquí se pasa a mayúsculas antes de mirar
+  // la forma, para que "exa-005" sirva igual que "EXA-005".
+  codigoExamen(valor) {
+    if (!valor.trim()) {
+      return 'Escribe el código del examen.';
+    }
+    if (!/^EXA-\d{3}$/.test(valor.trim().toUpperCase())) {
+      return 'El código es EXA- y tres dígitos, por ejemplo EXA-005.';
+    }
+    return '';
+  },
+
+  titulo(valor) {
+    if (!valor.trim()) {
+      return 'Escribe el título del examen.';
+    }
+    if (valor.trim().length < 4) {
+      return 'El título necesita 4 caracteres o más.';
+    }
+    return '';
+  },
+
+  descripcion(valor) {
+    if (!valor.trim()) {
+      return 'Escribe de qué trata el examen.';
+    }
+    return '';
+  },
+
+  // Con type="number" el navegador deja pasar la "e" científica y esconde las
+  // flechas según el navegador, así que se valida como texto y se convierte.
+  tiempo(valor) {
+    if (!valor.trim()) {
+      return 'Escribe cuánto dura el examen.';
+    }
+    const minutos = Number(valor);
+    if (!Number.isInteger(minutos) || minutos < 1 || minutos > 180) {
+      return 'La duración son minutos enteros entre 1 y 180.';
+    }
+    return '';
+  },
+
+  aprobacion(valor) {
+    if (!valor.trim()) {
+      return 'Escribe el porcentaje para aprobar.';
+    }
+    const puntos = Number(valor);
+    if (!Number.isInteger(puntos) || puntos < 1 || puntos > 100) {
+      return 'La aprobación es un porcentaje entre 1 y 100.';
+    }
+    return '';
+  },
+
   // Debajo del campo va un párrafo con el id del campo más "-error"; aquí se
   // escribe el texto, se marca el borde y se avisa a quien usa lector de pantalla.
   mostrar(monticulo, campo, mensaje) {

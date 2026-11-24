@@ -15,6 +15,68 @@ Acme.vistas = Acme.vistas || {};
   // El plural no se arma pegando una "s", porque "borrador" saldría "borradors".
   const plurales = { Publicado: 'publicados', Borrador: 'en borrador' };
 
+  // El formulario no está montado siempre: la tabla necesita todo el ancho para
+  // que las cinco columnas quepan sin scroll, así que solo aparece cuando se pide.
+  let creando = false;
+
+  // Sobrevive al re-renderizado que vacía el formulario después de guardar.
+  let aviso = null;
+
+  // Se llama igual que la de usuarios y no choca porque esta queda dentro de la
+  // llamada de arriba; la global solo la ve el archivo de usuarios.
+  function campo(id, etiqueta, atributos) {
+    return `
+      <div class="field">
+        <label for="${id}">${etiqueta}</label>
+        <input id="${id}" name="${id}" ${atributos} aria-describedby="${id}-error">
+        <p class="error" id="${id}-error" hidden></p>
+      </div>`;
+  }
+
+  function formulario() {
+    return `
+      <div class="card">
+        <div class="ch">
+          <div>
+            <h3>Nuevo examen</h3>
+            <p class="sub">Queda guardado en este navegador</p>
+          </div>
+        </div>
+
+        <p class="aviso ${aviso ? aviso.tipo : 'no'}" id="aviso-examen"
+          ${aviso ? '' : 'hidden'}>${aviso ? aviso.texto : ''}</p>
+
+        <form id="form-examen" novalidate>
+          <div class="grid2">
+            ${campo('dato-codigo', 'Código', 'type="text" autocomplete="off" placeholder="EXA-005"')}
+            ${campo('dato-tiempo', 'Tiempo (min)', 'type="text" inputmode="numeric" autocomplete="off" placeholder="20"')}
+          </div>
+          ${campo('dato-titulo', 'Título', 'type="text" autocomplete="off" placeholder="Álgebra lineal"')}
+          <div class="field">
+            <label for="dato-desc">Descripción</label>
+            <textarea id="dato-desc" name="dato-desc" rows="3"
+              placeholder="Qué evalúa este examen" aria-describedby="dato-desc-error"></textarea>
+            <p class="error" id="dato-desc-error" hidden></p>
+          </div>
+          <div class="grid2">
+            ${campo('dato-aprobacion', 'Aprobación (%)', 'type="text" inputmode="numeric" autocomplete="off" placeholder="70"')}
+            <div class="field">
+              <label for="dato-estado">Estado</label>
+              <select id="dato-estado" name="dato-estado">
+                <option>Borrador</option>
+                <option>Publicado</option>
+              </select>
+            </div>
+          </div>
+          <p class="hint">Sin preguntas todavía nadie puede resolverlo, así que para publicarlo hay que agregarle la primera.</p>
+          <div class="btnrow">
+            <button class="btn pri" type="submit">Guardar examen</button>
+            <button class="btn sec" type="button" id="cancelar-examen">Cancelar</button>
+          </div>
+        </form>
+      </div>`;
+  }
+
   function seleccionados() {
     const texto = normalizar(filtro.texto.trim());
 
@@ -101,7 +163,11 @@ Acme.vistas = Acme.vistas || {};
           <i class="ic search"></i>
           <input id="buscar" class="srch" type="search" placeholder="Buscar por código o título"
             aria-label="Buscar por código, título o descripción">
-        </div>`,
+        </div>
+        ${creando ? '' : `
+        <button class="btn pri" type="button" id="nuevo">
+          <i class="ic plus"></i>Nuevo examen
+        </button>`}`,
       contenido: `
         <div class="card">
           <div class="ch">
@@ -122,7 +188,8 @@ Acme.vistas = Acme.vistas || {};
               <tbody id="cuerpo">${filas(seleccionados())}</tbody>
             </table>
           </div>
-        </div>`
+        </div>`,
+      lateral: creando ? formulario() : ''
     });
 
     const buscar = monticulo.querySelector('#buscar');
@@ -147,6 +214,100 @@ Acme.vistas = Acme.vistas || {};
       }
       filtro.estado = boton.dataset.estado;
       pintar();
+    });
+
+    const nuevo = monticulo.querySelector('#nuevo');
+    if (nuevo) {
+      nuevo.addEventListener('click', () => {
+        creando = true;
+        aviso = null;
+        Acme.vistas.examenes(monticulo);
+        monticulo.querySelector('#dato-codigo').focus();
+      });
+      return;
+    }
+
+    const caja = monticulo.querySelector('#aviso-examen');
+    if (!caja) {
+      return;
+    }
+
+    const pintarAviso = () => {
+      caja.textContent = aviso ? aviso.texto : '';
+      caja.className = 'aviso ' + (aviso ? aviso.tipo : 'no');
+      caja.hidden = !aviso;
+    };
+
+    monticulo.querySelector('#cancelar-examen').addEventListener('click', () => {
+      creando = false;
+      aviso = null;
+      Acme.vistas.examenes(monticulo);
+    });
+
+    const forma = monticulo.querySelector('#form-examen');
+
+    forma.addEventListener('input', () => {
+      if (aviso) {
+        aviso = null;
+        pintarAviso();
+      }
+    });
+
+    forma.addEventListener('submit', (evento) => {
+      evento.preventDefault();
+      const valor = (campoId) => monticulo.querySelector('#' + campoId).value;
+
+      const mensajes = {
+        'dato-codigo': Acme.validar.codigoExamen(valor('dato-codigo')),
+        'dato-titulo': Acme.validar.titulo(valor('dato-titulo')),
+        'dato-desc': Acme.validar.descripcion(valor('dato-desc')),
+        'dato-tiempo': Acme.validar.tiempo(valor('dato-tiempo')),
+        'dato-aprobacion': Acme.validar.aprobacion(valor('dato-aprobacion'))
+      };
+
+      Object.entries(mensajes).forEach(([campoId, texto]) => {
+        Acme.validar.mostrar(monticulo, campoId, texto);
+      });
+
+      if (Object.values(mensajes).some((texto) => texto)) {
+        aviso = { tipo: 'no', texto: 'Revisa los campos marcados en rojo.' };
+        pintarAviso();
+        return;
+      }
+
+      const codigo = valor('dato-codigo').trim().toUpperCase();
+      const dueño = Acme.estado.examenes.find((uno) => uno.codigo === codigo);
+      if (dueño) {
+        aviso = { tipo: 'no', texto: 'El código ' + codigo + ' ya lo usa "' + dueño.titulo + '".' };
+        pintarAviso();
+        return;
+      }
+
+      // Un examen publicado sin preguntas sería una página sin qué responder.
+      if (valor('dato-estado') === 'Publicado') {
+        aviso = { tipo: 'no', texto: 'Sin preguntas no se puede publicar. Guárdalo en borrador.' };
+        pintarAviso();
+        return;
+      }
+
+      Acme.estado.examenes.push({
+        codigo,
+        titulo: valor('dato-titulo').trim(),
+        descripcion: valor('dato-desc').trim(),
+        tiempo: Number(valor('dato-tiempo')),
+        aprobacion: Number(valor('dato-aprobacion')),
+        estado: valor('dato-estado'),
+        preguntas: []
+      });
+      Acme.estado.guardar('examenes');
+
+      aviso = { tipo: 'ok', texto: codigo + ' quedó guardado en borrador.' };
+      // La página se monta entera para que el formulario quede en blanco y el
+      // aviso verde siga visible; así se puede crear el siguiente de una.
+      Acme.vistas.examenes(monticulo);
+      // Sin esto el foco se queda en el cuerpo del documento y quien usa teclado
+      // o lector de pantalla pierde el sitio donde estaba escribiendo.
+      monticulo.querySelector('#dato-codigo').focus();
     });
   };
 })();
