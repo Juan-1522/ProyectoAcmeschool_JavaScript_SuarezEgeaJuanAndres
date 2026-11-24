@@ -18,7 +18,7 @@ const loginMarca = `
       <li><i class="ic clock"></i> El examen tiene un tiempo límite que se ve en pantalla</li>
       <li><i class="ic check"></i> Al terminar se saca el porcentaje de aciertos y se compara con el de aprobación</li>
     </ul>
-    <p class="nota">Los datos se guardan en este navegador con localStorage.</p>
+    <p class="nota">Los datos se guardan en este navegador.</p>
   </aside>`;
 
 function loginFormulario() {
