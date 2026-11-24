@@ -41,10 +41,13 @@ Acme.vistas.panel = (monticulo) => {
   const filas = intentos.map((intento) => {
     const examen = examenes.find((uno) => uno.codigo === intento.codigo);
     const nota = Acme.nota(examen, intento.elegidas);
-    const agotado = `${examen.tiempo}:00`;
-    const tiempo = intento.tiempoUsado === agotado
+    // Se comparan los segundos y no el texto: el reloj escribe '05:00' y la
+    // semilla trae '5:00' para el mismo examen de cinco minutos.
+    const [min, seg] = intento.tiempoUsado.split(':').map(Number);
+    const total = String(examen.tiempo).padStart(2, '0') + ':00';
+    const tiempo = min * 60 + seg === examen.tiempo * 60
       ? `${intento.tiempoUsado} · tiempo agotado`
-      : `${intento.tiempoUsado} de ${agotado}`;
+      : `${intento.tiempoUsado} de ${total}`;
 
     return `
       <tr>

@@ -52,6 +52,15 @@ Acme.vistas = Acme.vistas || {};
     return String(min).padStart(2, '0') + ':' + String(seg).padStart(2, '0');
   }
 
+  // Con el mismo formato de las fechas que ya trae la semilla, para que el panel
+  // las pueda ordenar comparándolas como texto.
+  function fechaActual() {
+    const ahora = new Date();
+    const dos = (n) => String(n).padStart(2, '0');
+    return ahora.getFullYear() + '-' + dos(ahora.getMonth() + 1) + '-' + dos(ahora.getDate()) +
+      'T' + dos(ahora.getHours()) + ':' + dos(ahora.getMinutes()) + ':' + dos(ahora.getSeconds());
+  }
+
   // Pinta sobre lo que esté montado en este momento. Si la persona se fue a otra
   // ruta la cuenta sigue corriendo, y el reloj solo se ve al volver al examen.
   function pintaReloj() {
@@ -81,17 +90,33 @@ Acme.vistas = Acme.vistas || {};
     }, 1000);
   }
 
-  // Se cierra solo si el examen sigue en pantalla: si la persona se fue a otra
-  // ruta, la nota queda esperando a que vuelva a entrar al módulo.
-  function cerrarPorTiempo() {
+  // El intento se guarda con la forma que ya lee el panel: a quién, qué examen,
+  // cuándo, cuánto tardó y qué marcó en cada pregunta.
+  function cerrar(segundosUsados, porTiempo) {
     parar();
-    usado = limite;
-    agotado = true;
-    resultado = Acme.nota(examenActual(), elegidas);
+    const examen = examenActual();
+    usado = segundosUsados;
+    agotado = porTiempo;
+    Acme.estado.intentos.push({
+      codigo: examen.codigo,
+      identificacion: identidad.id,
+      nombre: identidad.nombre,
+      fecha: fechaActual(),
+      tiempoUsado: relojTexto(usado),
+      elegidas: elegidas.slice()
+    });
+    Acme.estado.guardar('intentos');
+    resultado = Acme.nota(examen, elegidas);
     pantalla = 'nota';
+    // Se cierra solo si el examen sigue en pantalla: si la persona se fue a otra
+    // ruta, la nota queda esperando a que vuelva a entrar al módulo.
     if (contenedor.querySelector('#reloj-caja')) {
       Acme.vistas.publico(contenedor);
     }
+  }
+
+  function cerrarPorTiempo() {
+    cerrar(limite, true);
   }
 
   function campoPub(id, etiqueta, atributos) {
@@ -239,7 +264,7 @@ Acme.vistas = Acme.vistas || {};
             </div>
           </div>
           <p class="hint">Tiempo usado ${relojTexto(usado)} de ${relojTexto(limite)}.${
-            agotado ? ' Se cerró al llegar a 00:00.' : ''}</p>
+            agotado ? ' Se cerró al llegar a 00:00.' : ''} Queda registrado con tus datos.</p>
           <div class="btnrow">
             <button class="btn pri" type="button" id="otro-examen">Volver a los exámenes</button>
           </div>
@@ -368,10 +393,7 @@ Acme.vistas = Acme.vistas || {};
           ' sin responder. ¿Terminar de todas formas?')) {
           return;
         }
-        resultado = Acme.nota(examen, elegidas);
-        usado = limite - restante;
-        pantalla = 'nota';
-        Acme.vistas.publico(monticulo);
+        cerrar(limite - restante, false);
       });
     }
 
