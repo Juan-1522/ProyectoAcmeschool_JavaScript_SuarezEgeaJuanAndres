@@ -1248,6 +1248,32 @@ td .code {
   white-space: nowrap;
 }
 
+/* El reloj va en la cabecera, al lado del contador, para no tener que subir a
+   ver cuánto queda. */
+.timer {
+  align-items: center;
+  background: var(--navy);
+  border-radius: 999px;
+  color: #fff;
+  display: flex;
+  font-family: var(--mono);
+  font-size: 14.5px;
+  font-weight: 700;
+  gap: 8px;
+  letter-spacing: .5px;
+  padding: 7px 13px;
+  white-space: nowrap;
+}
+
+.timer .ic {
+  height: 15px;
+  width: 15px;
+}
+
+.timer.low {
+  background: var(--no);
+}
+
 .pq {
   background: var(--card);
   border: 1px solid var(--line);
@@ -1350,6 +1376,12 @@ td .code {
 .notabox h3 {
   font-size: 17px;
   margin-bottom: 3px;
+}
+
+/* La línea del tiempo queda entre la caja y el botón: sin este aire el botón se
+   le pega encima. */
+.notabox + .hint {
+  margin-bottom: 14px;
 }
 
 .notapin {

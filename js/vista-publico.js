@@ -9,6 +9,15 @@ Acme.vistas = Acme.vistas || {};
   let identidad = null;
   let elegidas = [];
   let resultado = null;
+  // El reloj no vive en el HTML: se leen los segundos que quedan, así que al
+  // repintar una pantalla no se pierde la cuenta.
+  let reloj = null;
+  let restante = 0;
+  let limite = 0;
+  let usado = 0;
+  let agotado = false;
+  let contenedor = null;
+  const AVISO = 60;
 
   function disponibles() {
     return Acme.estado.examenes
@@ -21,15 +30,68 @@ Acme.vistas = Acme.vistas || {};
   }
 
   function reiniciar() {
+    parar();
     pantalla = 'lista';
     elegido = null;
     identidad = null;
     elegidas = [];
     resultado = null;
+    restante = 0;
+    limite = 0;
+    usado = 0;
+    agotado = false;
   }
 
   function respondidas() {
     return elegidas.filter((opcion) => opcion >= 0).length;
+  }
+
+  function relojTexto(segundos) {
+    const min = Math.floor(segundos / 60);
+    const seg = segundos % 60;
+    return String(min).padStart(2, '0') + ':' + String(seg).padStart(2, '0');
+  }
+
+  // Pinta sobre lo que esté montado en este momento. Si la persona se fue a otra
+  // ruta la cuenta sigue corriendo, y el reloj solo se ve al volver al examen.
+  function pintaReloj() {
+    const caja = contenedor && contenedor.querySelector('#reloj-caja');
+    if (!caja) {
+      return;
+    }
+    caja.querySelector('#reloj').textContent = relojTexto(restante);
+    caja.classList.toggle('low', restante <= AVISO);
+  }
+
+  function parar() {
+    clearInterval(reloj);
+    reloj = null;
+  }
+
+  function arrancar() {
+    parar();
+    reloj = setInterval(() => {
+      restante -= 1;
+      if (restante > 0) {
+        pintaReloj();
+        return;
+      }
+      restante = 0;
+      cerrarPorTiempo();
+    }, 1000);
+  }
+
+  // Se cierra solo si el examen sigue en pantalla: si la persona se fue a otra
+  // ruta, la nota queda esperando a que vuelva a entrar al módulo.
+  function cerrarPorTiempo() {
+    parar();
+    usado = limite;
+    agotado = true;
+    resultado = Acme.nota(examenActual(), elegidas);
+    pantalla = 'nota';
+    if (contenedor.querySelector('#reloj-caja')) {
+      Acme.vistas.publico(contenedor);
+    }
   }
 
   function campoPub(id, etiqueta, atributos) {
@@ -150,6 +212,7 @@ Acme.vistas = Acme.vistas || {};
         <div class="card pubhead">
           ${ficha(examen)}
           <p class="sub" id="contador">${respondidas()} de ${examen.preguntas.length} respondidas</p>
+          <p class="timer" id="reloj-caja"><i class="ic clock"></i><b id="reloj">${relojTexto(restante)}</b></p>
         </div>
         <div id="pq-lista">${bloques}</div>
         <div class="btnrow pubfoot">
@@ -175,6 +238,8 @@ Acme.vistas = Acme.vistas || {};
                  Este examen pide ${examen.aprobacion} %.</p>
             </div>
           </div>
+          <p class="hint">Tiempo usado ${relojTexto(usado)} de ${relojTexto(limite)}.${
+            agotado ? ' Se cerró al llegar a 00:00.' : ''}</p>
           <div class="btnrow">
             <button class="btn pri" type="button" id="otro-examen">Volver a los exámenes</button>
           </div>
@@ -189,6 +254,8 @@ Acme.vistas = Acme.vistas || {};
   }
 
   Acme.vistas.publico = (monticulo) => {
+    contenedor = monticulo;
+    parar();
     monticulo.innerHTML =
       pantalla === 'identidad' ? pantallaIdentidad()
         : pantalla === 'examen' ? pantallaExamen()
@@ -260,6 +327,10 @@ Acme.vistas = Acme.vistas || {};
         identidad = { id: identificacion.trim(), nombre: nombre.trim() };
         // Cada pregunta arranca en -1, que es la señal de que quedó vacía.
         elegidas = examenActual().preguntas.map(() => -1);
+        limite = examenActual().tiempo * 60;
+        restante = limite;
+        usado = 0;
+        agotado = false;
         pantalla = 'examen';
         Acme.vistas.publico(monticulo);
         monticulo.querySelector('input[type="radio"]').focus();
@@ -298,6 +369,7 @@ Acme.vistas = Acme.vistas || {};
           return;
         }
         resultado = Acme.nota(examen, elegidas);
+        usado = limite - restante;
         pantalla = 'nota';
         Acme.vistas.publico(monticulo);
       });
@@ -309,6 +381,13 @@ Acme.vistas = Acme.vistas || {};
         reiniciar();
         Acme.vistas.publico(monticulo);
       });
+    }
+
+    // Se retoma la cuenta con lo que quedaba, que es lo que queda cuando se salió
+    // con el botón atrás en vez de con el enlace de volver.
+    if (pantalla === 'examen') {
+      pintaReloj();
+      arrancar();
     }
   };
 })();
