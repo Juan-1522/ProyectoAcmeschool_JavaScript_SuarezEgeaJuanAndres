@@ -1106,6 +1106,272 @@ td .code {
   font-weight: 750;
 }
 
+/* ===== módulo público ===== */
+
+.pub {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.pubtop {
+  align-items: center;
+  background: var(--navy);
+  display: flex;
+  gap: 11px;
+  padding: 13px 28px;
+}
+
+.pubmarca {
+  flex: 1 1 auto;
+}
+
+.pubmarca b {
+  color: #fff;
+  display: block;
+  font-size: 15px;
+}
+
+.pubmarca small {
+  color: #9db6cd;
+  display: block;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.pubsalir {
+  border: 1px solid rgba(255, 255, 255, .28);
+  border-radius: 10px;
+  color: #e4eef7;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 14px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.pubsalir:hover {
+  background: rgba(255, 255, 255, .12);
+  color: #fff;
+}
+
+.pubmain {
+  flex: 1 1 auto;
+  margin: 0 auto;
+  max-width: 980px;
+  padding: 30px 26px 56px;
+  width: 100%;
+}
+
+.pubmain h1 {
+  margin-bottom: 5px;
+}
+
+.pubmain > .sub {
+  margin-bottom: 22px;
+}
+
+.exlist {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(272px, 1fr));
+}
+
+.excard {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-2);
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 18px 20px;
+}
+
+.excard h3 {
+  font-size: 16px;
+}
+
+.excard .code {
+  color: var(--mute);
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .3px;
+}
+
+.exdesc {
+  color: var(--mute);
+  font-size: 13px;
+}
+
+/* El botón va pegado al fondo: si un examen trae la descripción más larga, las
+   tarjetas del par siguen quedando al mismo nivel. */
+.excard .btn {
+  align-self: flex-start;
+  margin-top: auto;
+}
+
+.exmeta {
+  border-top: 1px solid var(--line-2);
+  display: flex;
+  gap: 20px;
+  padding-top: 11px;
+}
+
+.exmeta small {
+  color: var(--mute);
+  display: block;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: .6px;
+  text-transform: uppercase;
+}
+
+.exmeta b {
+  font-size: 14px;
+}
+
+.pubhead {
+  align-items: center;
+  display: flex;
+  gap: 20px;
+}
+
+.pubhead .exmeta {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.pubhead #contador {
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.pq {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-1);
+  margin-bottom: 12px;
+  padding: 16px 18px;
+}
+
+.pq-h {
+  align-items: flex-start;
+  display: flex;
+  gap: 11px;
+  margin-bottom: 12px;
+}
+
+.pq-n {
+  background: var(--navy);
+  border-radius: 8px;
+  color: #fff;
+  display: grid;
+  flex: 0 0 auto;
+  font-size: 12.5px;
+  font-weight: 800;
+  height: 26px;
+  place-items: center;
+  width: 26px;
+}
+
+.pq-h p {
+  font-size: 14.5px;
+  font-weight: 600;
+}
+
+.pq-op {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+/* label viene con display:block y margen para los campos del formulario; acá es
+   la caja de la opción, con el radio adentro y el texto al lado. */
+.pop {
+  align-items: center;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  color: var(--ink);
+  cursor: pointer;
+  display: flex;
+  font-size: 13.5px;
+  font-weight: 600;
+  gap: 10px;
+  margin-bottom: 0;
+  padding: 9px 12px;
+}
+
+.pop:hover {
+  background: #f8fbfe;
+  border-color: #b9c9dc;
+}
+
+.pop input[type="radio"] {
+  accent-color: var(--petrol);
+  flex: 0 0 auto;
+  height: 17px;
+  margin: 0;
+  width: 17px;
+}
+
+/* Sin :has el recuadro no se pinta, pero el radio del navegador igual se ve. */
+.pop:has(input:checked) {
+  background: var(--petrol-soft);
+  border-color: var(--petrol);
+}
+
+.pubfoot {
+  margin-top: 16px;
+}
+
+.notabox {
+  align-items: center;
+  border-radius: 14px;
+  display: flex;
+  gap: 18px;
+  margin-bottom: 18px;
+  padding: 18px;
+}
+
+.notabox.ok {
+  background: var(--ok-soft);
+  border: 1px solid #bfe3d3;
+}
+
+.notabox.no {
+  background: var(--no-soft);
+  border: 1px solid #f0c9c8;
+}
+
+.notabox h3 {
+  font-size: 17px;
+  margin-bottom: 3px;
+}
+
+.notapin {
+  font-size: 42px;
+  font-weight: 800;
+  letter-spacing: -1.6px;
+  line-height: 1;
+}
+
+.notabox.ok .notapin {
+  color: var(--ok);
+}
+
+.notabox.no .notapin {
+  color: var(--no);
+}
+
+.notapin small {
+  font-size: 18px;
+  letter-spacing: 0;
+}
+
 /* ===== avisos de los formularios ===== */
 
 .error {
@@ -1262,5 +1528,26 @@ input.malo:focus, textarea.malo:focus {
 
   .grid2 {
     grid-template-columns: 1fr;
+  }
+
+  .pubtop {
+    padding: 12px 18px;
+  }
+
+  .pubmain {
+    padding: 22px 18px 44px;
+  }
+
+  .exlist {
+    grid-template-columns: 1fr;
+  }
+
+  .pubhead {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .pubhead #contador {
+    margin-left: 0;
   }
 }

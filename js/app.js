@@ -6,7 +6,10 @@ const pantalla = document.getElementById('app');
 const rutas = {
   '#/panel': { vista: 'panel', privado: true },
   '#/usuarios': { vista: 'usuarios', privado: true },
-  '#/examenes': { vista: 'examenes', privado: true }
+  '#/examenes': { vista: 'examenes', privado: true },
+  // La única que no pide sesión: quien viene a resolver un examen no es
+  // usuario del panel.
+  '#/publico': { vista: 'publico', privado: false }
 };
 
 Acme.mostrar = () => {

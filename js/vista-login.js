@@ -105,4 +105,10 @@ function enlazarFormulario(monticulo) {
 Acme.vistas.login = (monticulo) => {
   monticulo.innerHTML = '<main class="auth">' + loginMarca + loginFormulario() + '</main>';
   enlazarFormulario(monticulo);
+
+  // El botón no inicia sesión: lleva al módulo público, el único que se abre
+  // sin cuenta, y el hashchange se encarga de montarlo.
+  monticulo.querySelector('#ir-publico').addEventListener('click', () => {
+    location.hash = '#/publico';
+  });
 };
