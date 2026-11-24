@@ -248,6 +248,17 @@ textarea {
   font-size: 14.5px;
 }
 
+.btn.mini {
+  gap: 6px;
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+.btn.mini .ic {
+  width: 13px;
+  height: 13px;
+}
+
 .btn:hover {
   transform: translateY(-1px);
 }
@@ -713,6 +724,88 @@ td .code {
   font-size: 13px;
   font-weight: 700;
   letter-spacing: .2px;
+}
+
+/* ===== editor de preguntas ===== */
+
+.qh {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 16px 0 9px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.qh b {
+  font-size: 12px;
+  color: var(--ink-2);
+}
+
+.sin-p {
+  color: var(--mute);
+  font-size: 12px;
+  margin: 0 0 10px;
+}
+
+.q {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 11px 12px 12px;
+  margin-bottom: 10px;
+  background: #fbfcfe;
+}
+
+.q.mala {
+  border-color: var(--no);
+}
+
+.q-h {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.q-h b {
+  font-size: 12px;
+  color: var(--mute);
+}
+
+.q .q-en {
+  margin-bottom: 9px;
+}
+
+.q-op {
+  align-items: center;
+  display: flex;
+  gap: 4px;
+  margin-bottom: 7px;
+}
+
+/* La regla general pone width:100% en todos los inputs y ahí el radio se
+   estiraba hasta desaparecer. Suelto mide 16 px y en el teléfono casi no se
+   atina, así que va dentro de una etiqueta que le da un blanco de 32 px. */
+.q-ok {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  height: 32px;
+  justify-content: center;
+  width: 32px;
+}
+
+.q-ok input[type="radio"] {
+  accent-color: var(--petrol);
+  height: 16px;
+  padding: 0;
+  width: 16px;
+}
+
+.q-op input[type="text"] {
+  flex: 1 1 auto;
 }
 
 .pill {

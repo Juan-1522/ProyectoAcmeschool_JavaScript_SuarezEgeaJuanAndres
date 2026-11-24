@@ -33,6 +33,52 @@ Acme.vistas = Acme.vistas || {};
       </div>`;
   }
 
+  // El enunciado y las respuestas viven en este arreglo mientras se escribe,
+  // porque cada vez que se agrega o se quita algo se vuelve a pintar el bloque
+  // entero y un re-pintado se lleva lo que había en las cajas.
+  let preguntas = [];
+
+  function preguntaVacia() {
+    // Dos respuestas como mínimo: con una sola no hay forma de equivocarse.
+    return { enunciado: '', respuestas: ['', ''], correcta: -1 };
+  }
+
+  function bloquePregunta(pregunta, numero) {
+    const opciones = pregunta.respuestas.map((texto, lugar) => `
+          <div class="q-op">
+            <label class="q-ok">
+              <input type="radio" name="ok${numero}"
+                aria-label="Marcar la respuesta correcta de la pregunta ${numero + 1}"
+                ${lugar === pregunta.correcta ? 'checked' : ''}>
+            </label>
+            <input class="q-op-t" type="text"
+              aria-label="Respuesta ${lugar + 1} de la pregunta ${numero + 1}">
+            ${pregunta.respuestas.length > 2 ? `
+              <button class="ib del" type="button" data-quitar-op="${numero}:${lugar}"
+                aria-label="Quitar la respuesta ${lugar + 1} de la pregunta ${numero + 1}">
+                <i class="ic trash"></i>
+              </button>` : ''}
+          </div>`).join('');
+
+    return `
+      <div class="q" data-p="${numero}">
+        <div class="q-h">
+          <b>Pregunta ${numero + 1}</b>
+          <button class="ib del" type="button" data-quitar="${numero}"
+            aria-label="Quitar la pregunta ${numero + 1}">
+            <i class="ic trash"></i>
+          </button>
+        </div>
+        <input class="q-en" type="text" placeholder="Escribe la pregunta"
+          aria-label="Enunciado de la pregunta ${numero + 1}">
+        ${opciones}
+        ${pregunta.respuestas.length < 6 ? `
+          <button class="btn sec mini" type="button" data-nueva="${numero}">
+            <i class="ic plus"></i>Agregar respuesta
+          </button>` : ''}
+      </div>`;
+  }
+
   function formulario() {
     return `
       <div class="card">
@@ -69,6 +115,15 @@ Acme.vistas = Acme.vistas || {};
             </div>
           </div>
           <p class="hint">Sin preguntas todavía nadie puede resolverlo, así que para publicarlo hay que agregarle la primera.</p>
+
+          <div class="qh">
+            <b>Preguntas</b>
+            <button class="btn sec mini" type="button" id="agregar-pregunta">
+              <i class="ic plus"></i>Agregar pregunta
+            </button>
+          </div>
+          <div id="lista-preguntas"></div>
+
           <div class="btnrow">
             <button class="btn pri" type="submit">Guardar examen</button>
             <button class="btn sec" type="button" id="cancelar-examen">Cancelar</button>
@@ -221,6 +276,7 @@ Acme.vistas = Acme.vistas || {};
       nuevo.addEventListener('click', () => {
         creando = true;
         aviso = null;
+        preguntas = [];
         Acme.vistas.examenes(monticulo);
         monticulo.querySelector('#dato-codigo').focus();
       });
@@ -232,21 +288,105 @@ Acme.vistas = Acme.vistas || {};
       return;
     }
 
+    const listaP = monticulo.querySelector('#lista-preguntas');
+
     const pintarAviso = () => {
       caja.textContent = aviso ? aviso.texto : '';
       caja.className = 'aviso ' + (aviso ? aviso.tipo : 'no');
       caja.hidden = !aviso;
     };
 
+    // El texto de cada caja se copia desde el arreglo en JavaScript, igual que en
+    // el formulario de usuarios: puesto en el HTML, una comilla lo desarmaría.
+    const pintarPreguntas = () => {
+      listaP.innerHTML = preguntas.length
+        ? preguntas.map(bloquePregunta).join('')
+        : '<p class="sin-p">Todavía no hay preguntas. Se pueden guardar en borrador y completarlas después.</p>';
+
+      [...listaP.querySelectorAll('.q')].forEach((bloque, numero) => {
+        bloque.querySelector('.q-en').value = preguntas[numero].enunciado;
+        [...bloque.querySelectorAll('.q-op-t')].forEach((entrada, lugar) => {
+          entrada.value = preguntas[numero].respuestas[lugar];
+        });
+      });
+    };
+
+    // El formulario llega con la lista vacía y aquí se llena, para que volver a
+    // este módulo después de ir al panel no muestre las preguntas en blanco.
+    pintarPreguntas();
+
+    // Lo escrito en pantalla es la verdad, así que antes de mover el arreglo se
+    // recoge todo de vuelta; findIndex devuelve -1 si nadie marcó la correcta.
+    const leerPreguntas = () => [...listaP.querySelectorAll('.q')].map((bloque) => ({
+      enunciado: bloque.querySelector('.q-en').value,
+      respuestas: [...bloque.querySelectorAll('.q-op-t')].map((entrada) => entrada.value),
+      correcta: [...bloque.querySelectorAll('input[type="radio"]')].findIndex((marca) => marca.checked)
+    }));
+
+    monticulo.querySelector('#agregar-pregunta').addEventListener('click', () => {
+      preguntas = leerPreguntas();
+      preguntas.push(preguntaVacia());
+      pintarPreguntas();
+      listaP.lastElementChild.querySelector('.q-en').focus();
+    });
+
+    listaP.addEventListener('click', (evento) => {
+      const nueva = evento.target.closest('[data-nueva]');
+      const quitarOp = evento.target.closest('[data-quitar-op]');
+      const quitar = evento.target.closest('[data-quitar]');
+
+      if (!nueva && !quitarOp && !quitar) {
+        return;
+      }
+
+      preguntas = leerPreguntas();
+
+      if (nueva) {
+        preguntas[Number(nueva.dataset.nueva)].respuestas.push('');
+      }
+
+      if (quitarOp) {
+        const [numero, lugar] = quitarOp.dataset.quitarOp.split(':').map(Number);
+        const pregunta = preguntas[numero];
+        pregunta.respuestas.splice(lugar, 1);
+        // Al borrar una, las que siguen bajan un puesto; si la marcada era esa,
+        // se queda sin correcta hasta que se vuelva a elegir.
+        if (pregunta.correcta === lugar) {
+          pregunta.correcta = -1;
+        } else if (pregunta.correcta > lugar) {
+          pregunta.correcta -= 1;
+        }
+      }
+
+      if (quitar) {
+        preguntas.splice(Number(quitar.dataset.quitar), 1);
+      }
+
+      pintarPreguntas();
+
+      if (nueva) {
+        const bloque = listaP.querySelector('[data-p="' + nueva.dataset.nueva + '"]');
+        const entradas = bloque.querySelectorAll('.q-op-t');
+        entradas[entradas.length - 1].focus();
+      } else {
+        const siguiente = listaP.querySelector('.q-en') || monticulo.querySelector('#agregar-pregunta');
+        siguiente.focus();
+      }
+    });
+
     monticulo.querySelector('#cancelar-examen').addEventListener('click', () => {
       creando = false;
       aviso = null;
+      preguntas = [];
       Acme.vistas.examenes(monticulo);
     });
 
     const forma = monticulo.querySelector('#form-examen');
 
     forma.addEventListener('input', () => {
+      // Cada tecla devuelve lo escrito al arreglo, para que irse a otro módulo y
+      // volver no deje el examen a medias.
+      preguntas = leerPreguntas();
       if (aviso) {
         aviso = null;
         pintarAviso();
@@ -283,12 +423,44 @@ Acme.vistas = Acme.vistas || {};
         return;
       }
 
+      // Una respuesta en blanco no se guarda: se descarta y se revisa lo que queda.
+      const limpias = leerPreguntas().map((pregunta) => ({
+        enunciado: pregunta.enunciado.trim(),
+        respuestas: pregunta.respuestas
+          .map((texto, lugar) => ({ texto: texto.trim(), correcta: lugar === pregunta.correcta }))
+          .filter((una) => una.texto)
+      }));
+
+      const faltas = limpias.map((pregunta, numero) => {
+        if (!pregunta.enunciado) {
+          return 'La pregunta ' + (numero + 1) + ' no tiene enunciado.';
+        }
+        if (pregunta.respuestas.length < 2) {
+          return 'La pregunta ' + (numero + 1) + ' necesita dos respuestas con texto.';
+        }
+        return pregunta.respuestas.some((una) => una.correcta)
+          ? ''
+          : 'A la pregunta ' + (numero + 1) + ' le falta marcar la respuesta correcta.';
+      });
+
+      const primera = faltas.find((texto) => texto);
+      if (primera) {
+        [...listaP.querySelectorAll('.q')].forEach((bloque, numero) => {
+          bloque.classList.toggle('mala', Boolean(faltas[numero]));
+        });
+        aviso = { tipo: 'no', texto: primera };
+        pintarAviso();
+        return;
+      }
+
       // Un examen publicado sin preguntas sería una página sin qué responder.
-      if (valor('dato-estado') === 'Publicado') {
+      if (valor('dato-estado') === 'Publicado' && !limpias.length) {
         aviso = { tipo: 'no', texto: 'Sin preguntas no se puede publicar. Guárdalo en borrador.' };
         pintarAviso();
         return;
       }
+
+      const estado = valor('dato-estado');
 
       Acme.estado.examenes.push({
         codigo,
@@ -296,12 +468,19 @@ Acme.vistas = Acme.vistas || {};
         descripcion: valor('dato-desc').trim(),
         tiempo: Number(valor('dato-tiempo')),
         aprobacion: Number(valor('dato-aprobacion')),
-        estado: valor('dato-estado'),
-        preguntas: []
+        estado,
+        preguntas: limpias
       });
       Acme.estado.guardar('examenes');
 
-      aviso = { tipo: 'ok', texto: codigo + ' quedó guardado en borrador.' };
+      preguntas = [];
+      aviso = {
+        tipo: 'ok',
+        texto: codigo + ' quedó ' + (estado === 'Publicado' ? 'publicado' : 'en borrador') +
+          (limpias.length
+            ? ' con ' + limpias.length + (limpias.length === 1 ? ' pregunta.' : ' preguntas.')
+            : '.')
+      };
       // La página se monta entera para que el formulario quede en blanco y el
       // aviso verde siga visible; así se puede crear el siguiente de una.
       Acme.vistas.examenes(monticulo);
