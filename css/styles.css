@@ -1354,6 +1354,55 @@ td .code {
   margin-top: 16px;
 }
 
+/* ===== revisión de respuestas ===== */
+
+/* Acá las opciones no se pueden tocar: el color y la etiqueta de al lado son los
+   que explican qué pasó en cada pregunta. */
+.rev .pop {
+  cursor: default;
+}
+
+.rev .pop.buena {
+  background: var(--ok-soft);
+  border-color: #bfe3d3;
+}
+
+.rev .pop.mala {
+  background: var(--no-soft);
+  border-color: #f0c9c8;
+}
+
+.rev .pop .tag {
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: .5px;
+  margin-left: auto;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.tag.ok {
+  color: var(--ok);
+}
+
+.tag.no {
+  color: var(--no);
+}
+
+.pq-n.bien {
+  background: var(--ok);
+}
+
+.pq-n.mal {
+  background: var(--no);
+}
+
+.sin-r {
+  color: var(--mute);
+  font-size: 12.5px;
+  margin-top: 9px;
+}
+
 .notabox {
   align-items: center;
   border-radius: 14px;

@@ -266,8 +266,56 @@ Acme.vistas = Acme.vistas || {};
           <p class="hint">Tiempo usado ${relojTexto(usado)} de ${relojTexto(limite)}.${
             agotado ? ' Se cerró al llegar a 00:00.' : ''} Queda registrado con tus datos.</p>
           <div class="btnrow">
+            <button class="btn sec" type="button" id="ver-revision">Revisar respuestas</button>
             <button class="btn pri" type="button" id="otro-examen">Volver a los exámenes</button>
           </div>
+        </div>`
+    );
+  }
+
+  // En la revisión ya no hay radios: el color dice qué era correcto y la etiqueta
+  // de al lado lo explica con palabras, para que no dependa solo del verde o rojo.
+  function pantallaRevision() {
+    const examen = examenActual();
+
+    const bloques = examen.preguntas.map((pregunta, numero) => {
+      const correcta = pregunta.respuestas.findIndex((una) => una.correcta);
+      const marcada = elegidas[numero];
+
+      const opciones = pregunta.respuestas.map((una, opcion) => {
+        const buena = opcion === correcta;
+        const mala = opcion === marcada && !buena;
+        const etiqueta = buena
+          ? (marcada === correcta ? 'Tu respuesta' : 'Era esta')
+            : mala ? 'Marcaste esta' : '';
+        return `
+            <p class="pop ${buena ? 'buena' : ''} ${mala ? 'mala' : ''}">
+              <span>${una.texto}</span>${etiqueta ? `<span class="tag ${buena ? 'ok' : 'no'}">${etiqueta}</span>` : ''}
+            </p>`;
+      }).join('');
+
+      return `
+        <div class="pq rev">
+          <div class="pq-h">
+            <span class="pq-n ${marcada === correcta ? 'bien' : 'mal'}">${numero + 1}</span>
+            <p>${pregunta.enunciado}</p>
+          </div>
+          <div class="pq-op">${opciones}</div>
+          ${marcada === -1 ? '<p class="sin-r">No marcaste ninguna opción en esta pregunta.</p>' : ''}
+        </div>`;
+    }).join('');
+
+    return marco(
+      'Revisión de respuestas',
+      identidad.nombre + ' · ' + examen.codigo + ' · ' + resultado.aciertos + ' de ' + resultado.total + ' correctas',
+      `
+        <div class="card">
+          <p class="sub">En verde está la opción correcta. En rojo, lo que marcaste si te equivocaste.</p>
+        </div>
+        <div id="rev-lista">${bloques}</div>
+        <div class="btnrow pubfoot">
+          <button class="btn sec" type="button" id="volver-nota">Volver al resultado</button>
+          <button class="btn pri" type="button" id="otro-examen">Volver a los exámenes</button>
         </div>`
     );
   }
@@ -285,9 +333,12 @@ Acme.vistas = Acme.vistas || {};
       pantalla === 'identidad' ? pantallaIdentidad()
         : pantalla === 'examen' ? pantallaExamen()
           : pantalla === 'nota' ? pantallaNota()
-            : pantallaLista();
+            : pantalla === 'revision' ? pantallaRevision()
+              : pantallaLista();
+    // La revisión es larga: sin esto, al volver al resultado queda uno viendo el medio.
+    window.scrollTo(0, 0);
 
-    // El enlace de arriba está en las cuatro pantallas: en el examen puede
+    // El enlace de arriba está en todas las pantallas: en el examen puede
     // significar perder respuestas, y en las demás solo limpia lo elegido.
     monticulo.querySelector('#salir-pub').addEventListener('click', (evento) => {
       if (!puedeSalir()) {
@@ -362,6 +413,8 @@ Acme.vistas = Acme.vistas || {};
       });
     }
 
+    // #pq-lista solo existe en el examen; la revisión usa #rev-lista para no
+    // enganchar estos botones que ahí no están.
     const cuerpo = monticulo.querySelector('#pq-lista');
     if (cuerpo) {
       const examen = examenActual();
@@ -394,6 +447,22 @@ Acme.vistas = Acme.vistas || {};
           return;
         }
         cerrar(limite - restante, false);
+      });
+    }
+
+    const revisar = monticulo.querySelector('#ver-revision');
+    if (revisar) {
+      revisar.addEventListener('click', () => {
+        pantalla = 'revision';
+        Acme.vistas.publico(monticulo);
+      });
+    }
+
+    const alResultado = monticulo.querySelector('#volver-nota');
+    if (alResultado) {
+      alResultado.addEventListener('click', () => {
+        pantalla = 'nota';
+        Acme.vistas.publico(monticulo);
       });
     }
 
