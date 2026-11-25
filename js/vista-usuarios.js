@@ -55,7 +55,7 @@ function filas(lista) {
       <td class="code">${uno.id}</td>
       <td>
         <div class="person">
-          <span class="av">${iniciales(uno.nombre)}</span>
+          <acme-inicial nombre="${atributo(uno.nombre)}"></acme-inicial>
           <div>${uno.nombre}</div>
         </div>
       </td>

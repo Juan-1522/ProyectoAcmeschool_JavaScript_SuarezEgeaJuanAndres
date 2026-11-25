@@ -290,6 +290,12 @@ textarea {
   overflow: hidden;
 }
 
+/* La etiqueta no pinta: con display contents el aside queda como hijo directo de
+   .page y siguen aplicando las reglas de siempre. */
+acme-barra {
+  display: contents;
+}
+
 .side {
   width: 252px;
   flex: 0 0 252px;

@@ -53,7 +53,7 @@ Acme.vistas.panel = (monticulo) => {
       <tr>
         <td>
           <div class="person">
-            <span class="av">${iniciales(intento.nombre)}</span>
+            <acme-inicial nombre="${atributo(intento.nombre)}"></acme-inicial>
             <div>${intento.nombre}<small>${intento.identificacion}</small></div>
           </div>
         </td>
