@@ -58,16 +58,16 @@ Acme.vistas.panel = (monticulo) => {
 
     return `
       <tr>
-        <td>
+        <td data-c="Estudiante">
           <div class="person">
             <acme-inicial nombre="${atributo(intento.nombre)}"></acme-inicial>
             <div>${intento.nombre}<small>${intento.identificacion}</small></div>
           </div>
         </td>
-        <td>${examen.titulo}</td>
-        <td><b>${nota.porcentaje} %</b></td>
-        <td class="sm">${tiempo}</td>
-        <td><span class="pill ${nota.aprobado ? 'pub' : 'dra'}">${nota.aprobado ? 'Aprobado' : 'No aprobado'}</span></td>
+        <td data-c="Examen">${examen.titulo}</td>
+        <td data-c="Nota"><b>${nota.porcentaje} %</b></td>
+        <td class="sm" data-c="Tiempo usado">${tiempo}</td>
+        <td data-c="Estado"><span class="pill ${nota.aprobado ? 'pub' : 'dra'}">${nota.aprobado ? 'Aprobado' : 'No aprobado'}</span></td>
       </tr>`;
   }).join('');
 

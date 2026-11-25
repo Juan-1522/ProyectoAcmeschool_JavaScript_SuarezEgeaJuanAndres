@@ -52,17 +52,17 @@ function filas(lista) {
 
   return lista.map((uno) => `
     <tr${uno.id === editando ? ' class="sel"' : ''}>
-      <td class="code">${uno.id}</td>
-      <td>
+      <td class="code" data-c="Identificación">${uno.id}</td>
+      <td data-c="Nombre completo">
         <div class="person">
           <acme-inicial nombre="${atributo(uno.nombre)}"></acme-inicial>
           <div>${uno.nombre}</div>
         </div>
       </td>
-      <td class="sm">${uno.correo}</td>
-      <td class="sm">${uno.telefono}</td>
-      <td><span class="pill ${uno.cargo === 'Docente' ? 'doc' : 'adm'}">${uno.cargo}</span></td>
-      <td class="acc">
+      <td class="sm" data-c="Correo">${uno.correo}</td>
+      <td class="sm" data-c="Teléfono">${uno.telefono}</td>
+      <td data-c="Cargo"><span class="pill ${uno.cargo === 'Docente' ? 'doc' : 'adm'}">${uno.cargo}</span></td>
+      <td class="acc" data-c="Acciones">
         <div class="iact">
           <button class="ib" type="button" data-edita="${uno.id}" aria-label="Editar a ${uno.nombre}">
             <i class="ic pencil"></i>

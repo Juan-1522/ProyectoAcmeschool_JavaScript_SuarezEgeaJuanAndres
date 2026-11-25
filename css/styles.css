@@ -474,10 +474,14 @@ a.nav:hover {
   gap: 20px;
   align-items: flex-start;
   flex: 1 1 auto;
+  flex-wrap: wrap;
 }
 
+/* La columna pide 776 px: son los 730 que mide la tabla de usuarios en su
+   ancho mínimo más los 46 de respiro de la tarjeta. Si con el formulario al
+   lado no caben, el formulario baja solo en vez de hacer deslizar la tabla. */
 .col {
-  flex: 1 1 auto;
+  flex: 1 1 776px;
   min-width: 0;
 }
 
@@ -1624,6 +1628,24 @@ input.malo:focus, textarea.malo:focus {
   font-size: 12.5px;
 }
 
+/* De 1120 px hacia abajo la barra lateral pasa a encabezar la página. Deja de
+   restar 252 px, así que la tabla de usuarios, que necesita 730, sigue entrando
+   como tabla en vez de empezar a deslizar. */
+@media (max-width: 1120px) {
+  .page {
+    flex-wrap: wrap;
+  }
+
+  .side {
+    width: 100%;
+    flex: 1 1 100%;
+  }
+
+  .main {
+    flex: 1 1 100%;
+  }
+}
+
 @media (max-width: 900px) {
   .auth {
     grid-template-columns: 1fr;
@@ -1639,19 +1661,6 @@ input.malo:focus, textarea.malo:focus {
 
   .auth .brand .bh {
     font-size: 26px;
-  }
-
-  .page {
-    flex-wrap: wrap;
-  }
-
-  .side {
-    width: 100%;
-    flex: 1 1 100%;
-  }
-
-  .main {
-    flex: 1 1 100%;
   }
 
   .head, .body {
@@ -1704,10 +1713,6 @@ input.malo:focus, textarea.malo:focus {
     width: 100%;
   }
 
-  .body {
-    flex-wrap: wrap;
-  }
-
   .grid2 {
     grid-template-columns: 1fr;
   }
@@ -1739,5 +1744,77 @@ input.malo:focus, textarea.malo:focus {
 @media (prefers-reduced-motion: reduce) {
   .btn {
     transition: none;
+  }
+}
+
+/* De 860 px hacia abajo la tabla de usuarios, que mide 730 en su ancho mínimo,
+   ya no entra ni quitándole el respiro a las celdas. Cada fila pasa a ficha y
+   la etiqueta de la columna se pone al lado del valor, así que ningún dato
+   desaparece. */
+@media (max-width: 860px) {
+  .tw {
+    overflow: visible;
+  }
+
+  .tw table,
+  .tw tbody,
+  .tw tr,
+  .tw td {
+    display: block;
+  }
+
+  .tw thead {
+    display: none;
+  }
+
+  .tw tr {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 4px 14px;
+    margin-bottom: 10px;
+  }
+
+  .tw tbody tr:last-child {
+    margin-bottom: 0;
+  }
+
+  .tw td,
+  .tw.compact td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 7px 0;
+    border-bottom: 0;
+    white-space: normal;
+    /* Un correo escrito sin guiones no tiene dónde romperse y saldría de la
+       ficha; aquí se corta por donde haga falta. */
+    overflow-wrap: anywhere;
+  }
+
+  .tw td::before {
+    content: attr(data-c);
+    color: var(--mute);
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: .7px;
+    text-transform: uppercase;
+    flex: 0 0 auto;
+  }
+
+  /* El valor es lo que debe ceder cuando la etiqueta y el dato no caben. */
+  .tw td > * {
+    min-width: 0;
+    text-align: right;
+  }
+
+  .tw td.vacio,
+  .tw.compact td.vacio {
+    justify-content: center;
+    padding: 22px 0;
+  }
+
+  .tw td.vacio::before {
+    content: none;
   }
 }

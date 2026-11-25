@@ -185,17 +185,17 @@ ${avisoCaja('aviso-examen')}
 
     return lista.map((examen) => `
       <tr${examen.codigo === editando ? ' class="sel"' : ''}>
-        <td class="code">${examen.codigo}</td>
-        <td>
+        <td class="code" data-c="Código">${examen.codigo}</td>
+        <td data-c="Título">
           <div class="ex">
             <b>${examen.titulo}</b>${examen.estado === 'Borrador' ? ' <span class="pill dra">Borrador</span>' : ''}
             <small>${examen.descripcion}</small>
           </div>
         </td>
-        <td class="sm">${examen.tiempo} min</td>
-        <td class="sm">${examen.aprobacion} %</td>
-        <td class="sm">${examen.preguntas.length}</td>
-        <td class="acc">
+        <td class="sm" data-c="Tiempo">${examen.tiempo} min</td>
+        <td class="sm" data-c="Aprobación">${examen.aprobacion} %</td>
+        <td class="sm" data-c="Preguntas">${examen.preguntas.length}</td>
+        <td class="acc" data-c="Acciones">
           <div class="iact">
             <button class="ib" type="button" data-edita="${examen.codigo}"
               aria-label="Editar ${examen.titulo}">
