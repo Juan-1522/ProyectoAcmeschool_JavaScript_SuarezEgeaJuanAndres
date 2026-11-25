@@ -571,6 +571,59 @@ a.nav:hover {
   margin-top: 9px;
 }
 
+/* ===== pendientes ===== */
+
+.tarea {
+  align-items: center;
+  background: #fbfcfe;
+  border: 1px solid var(--line-2);
+  border-radius: 12px;
+  display: flex;
+  gap: 12px;
+  padding: 11px 13px;
+}
+
+.tarea + .tarea {
+  margin-top: 9px;
+}
+
+.tarea .i {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+}
+
+.tarea .i .ic {
+  width: 15px;
+  height: 15px;
+}
+
+.tarea .t {
+  font-size: 13.5px;
+  font-weight: 700;
+}
+
+.tarea .t small {
+  color: var(--mute);
+  display: block;
+  font-size: 11.5px;
+  font-weight: 400;
+  margin-top: 1px;
+}
+
+.tarea .btn {
+  margin-left: auto;
+}
+
+/* Sin pendientes no hay a dónde llevar, así que la fila no trae botón. */
+.tarea.fin {
+  background: #fff;
+  border-style: dashed;
+}
+
 /* ===== tarjetas y tablas ===== */
 
 .card {
@@ -1601,6 +1654,15 @@ input.malo:focus, textarea.malo:focus {
 
   .card > .ch {
     flex-wrap: wrap;
+  }
+
+  /* El título y la explicación ocupan la fila entera y el botón baja solo. */
+  .tarea {
+    flex-wrap: wrap;
+  }
+
+  .tarea .t {
+    flex: 1 1 170px;
   }
 
   .chips {

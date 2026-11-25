@@ -32,15 +32,22 @@ Acme.vistas.panel = (monticulo) => {
   }).join('');
 
   // Un intento de un examen que ya no está no tiene nota que calcular, así que
-  // no entra en la tabla.
-  const intentos = Acme.estado.intentos
-    .filter((intento) => examenes.some((examen) => examen.codigo === intento.codigo))
-    .sort((uno, otro) => otro.fecha.localeCompare(uno.fecha))
+  // no entra en la tabla ni en los pendientes.
+  const vigentes = Acme.estado.intentos.filter((intento) =>
+    examenes.some((examen) => examen.codigo === intento.codigo));
+
+  const conNota = vigentes.map((intento) => {
+    const examen = examenes.find((uno) => uno.codigo === intento.codigo);
+    return { intento, examen, nota: Acme.nota(examen, intento.elegidas) };
+  });
+
+  const reprobados = conNota.filter((par) => !par.nota.aprobado).length;
+
+  const ultimos = [...conNota]
+    .sort((uno, otro) => otro.intento.fecha.localeCompare(uno.intento.fecha))
     .slice(0, 3);
 
-  const filas = intentos.map((intento) => {
-    const examen = examenes.find((uno) => uno.codigo === intento.codigo);
-    const nota = Acme.nota(examen, intento.elegidas);
+  const filas = ultimos.map(({ intento, examen, nota }) => {
     // Se comparan los segundos y no el texto: el reloj escribe '05:00' y la
     // semilla trae '5:00' para el mismo examen de cinco minutos.
     const [min, seg] = intento.tiempoUsado.split(':').map(Number);
@@ -63,6 +70,50 @@ Acme.vistas.panel = (monticulo) => {
         <td><span class="pill ${nota.aprobado ? 'pub' : 'dra'}">${nota.aprobado ? 'Aprobado' : 'No aprobado'}</span></td>
       </tr>`;
   }).join('');
+
+  // El cartel de pendientes se arma con lo que ya está en la pantalla: si un
+  // número no molesta, su fila no aparece.
+  const plural = (cantidad, uno, varios) => cantidad + ' ' + (cantidad === 1 ? uno : varios);
+  const sinIntentos = usuarios.filter((uno) =>
+    !vigentes.some((intento) => intento.identificacion === uno.id)).length;
+  const pendientes = [];
+
+  if (examenes.length !== publicados) {
+    pendientes.push({
+      clase: 'co', icono: 'doc', ir: '#/examenes', boton: 'Ver exámenes',
+      titulo: plural(examenes.length - publicados, 'examen en borrador', 'exámenes en borrador'),
+      detalle: 'El módulo público no los muestra todavía.'
+    });
+  }
+
+  if (reprobados) {
+    pendientes.push({
+      clase: 'wa', icono: 'search', bajar: 'rendimiento', boton: 'Ver rendimiento',
+      titulo: plural(reprobados, 'intento reprobado', 'intentos reprobados'),
+      detalle: 'Quedaron por debajo del porcentaje que aprueba.'
+    });
+  }
+
+  if (sinIntentos) {
+    pendientes.push({
+      clase: 'pe', icono: 'users', ir: '#/usuarios', boton: 'Ver usuarios',
+      titulo: plural(sinIntentos, 'usuario sin intentos', 'usuarios sin intentos'),
+      detalle: 'Todavía no aparecen entre los intentos registrados.'
+    });
+  }
+
+  const tareas = pendientes.length
+    ? pendientes.map((una) => `
+              <div class="tarea">
+                <div class="i ${una.clase}"><i class="ic ${una.icono}"></i></div>
+                <p class="t">${una.titulo}<small>${una.detalle}</small></p>
+                <button type="button" class="btn sec mini" ${una.ir ? `data-ir="${una.ir}"` : `data-bajar="${una.bajar}"`}>${una.boton}</button>
+              </div>`).join('')
+    : `
+              <div class="tarea fin">
+                <div class="i ok"><i class="ic check"></i></div>
+                <p class="t">Nada pendiente<small>Los exámenes están publicados y ya tienen intentos.</small></p>
+              </div>`;
 
   Acme.montar(monticulo, {
     activa: '#/panel',
@@ -96,7 +147,17 @@ Acme.vistas.panel = (monticulo) => {
               </div>
             </div>
 
-            <div class="card">
+            <div class="card" id="tareas">
+              <div class="ch">
+                <div>
+                  <h3>Qué hacer primero</h3>
+                  <p class="sub">Se calcula con los datos guardados en este navegador</p>
+                </div>
+              </div>
+              ${tareas}
+            </div>
+
+            <div class="card" id="rendimiento">
               <div class="ch">
                 <div>
                   <h3>Rendimiento por examen</h3>
@@ -129,5 +190,19 @@ Acme.vistas.panel = (monticulo) => {
               </div>
             </div>
     `
+  });
+
+  // Cada botón trae el destino escrito en la fila: una ruta del panel o un
+  // bloque de esta misma página al que hace falta bajar.
+  monticulo.querySelector('#tareas').addEventListener('click', (evento) => {
+    const boton = evento.target.closest('button');
+    if (!boton) return;
+
+    if (boton.dataset.ir) {
+      location.hash = boton.dataset.ir;
+      return;
+    }
+
+    monticulo.querySelector('#' + boton.dataset.bajar).scrollIntoView({ block: 'start' });
   });
 };
