@@ -175,11 +175,13 @@ ${avisoCaja('aviso-examen')}
 
   function filas(lista) {
     if (!lista.length) {
+      // Si no hay ningún examen, culpar al filtro sería mentira.
+      const aviso = filtro.texto.trim() || filtro.estado
+        ? 'Ningún examen coincide con ' + (filtro.texto.trim() ? '"' + filtro.texto.trim() + '"' : 'ese filtro') + '.'
+        : 'Todavía no hay exámenes. Cree el primero con Nuevo examen.';
       return `
         <tr>
-          <td class="vacio" colspan="6">
-            Ningún examen coincide con ${filtro.texto.trim() ? '"' + filtro.texto.trim() + '"' : 'ese filtro'}.
-          </td>
+          <td class="vacio" colspan="6">${aviso}</td>
         </tr>`;
     }
 

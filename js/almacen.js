@@ -11,9 +11,5 @@ Acme.almacen = {
 
   escribir(clave, valor) {
     localStorage.setItem(clave, JSON.stringify(valor));
-  },
-
-  borrar(clave) {
-    localStorage.removeItem(clave);
   }
 };

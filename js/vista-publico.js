@@ -13,6 +13,7 @@ Acme.vistas = Acme.vistas || {};
   // repintar una pantalla no se pierde la cuenta.
   let reloj = null;
   let restante = 0;
+  let inicio = 0;
   let limite = 0;
   let usado = 0;
   let agotado = false;
@@ -37,6 +38,7 @@ Acme.vistas = Acme.vistas || {};
     elegidas = [];
     resultado = null;
     restante = 0;
+    inicio = 0;
     limite = 0;
     usado = 0;
     agotado = false;
@@ -77,15 +79,24 @@ Acme.vistas = Acme.vistas || {};
     reloj = null;
   }
 
+  // Los segundos que quedan se leen contra la hora del equipo, no contra la
+  // cantidad de ticks: una pestaña congelada o un hilo lento no deben regalarle
+  // tiempo a quien responde.
+  function quedan() {
+    return Math.max(0, limite - Math.round((Date.now() - inicio) / 1000));
+  }
+
   function arrancar() {
     parar();
+    // Se retoma desde lo que quedaba, para que un repintado de la pantalla no
+    // devuelva el examen a su tiempo completo.
+    inicio = Date.now() - (limite - restante) * 1000;
     reloj = setInterval(() => {
-      restante -= 1;
+      restante = quedan();
       if (restante > 0) {
         pintaReloj();
         return;
       }
-      restante = 0;
       cerrarPorTiempo();
     }, 1000);
   }
@@ -447,7 +458,7 @@ Acme.vistas = Acme.vistas || {};
           ' sin responder. ¿Terminar de todas formas?')) {
           return;
         }
-        cerrar(limite - restante, false);
+        cerrar(limite - quedan(), false);
       });
     }
 

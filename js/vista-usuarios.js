@@ -42,11 +42,13 @@ function seleccionados() {
 
 function filas(lista) {
   if (!lista.length) {
+    // Si no hay ningún usuario, culpar al filtro sería mentira.
+    const aviso = filtro.texto.trim() || filtro.cargo
+      ? 'Ningún usuario coincide con ' + (filtro.texto.trim() ? '"' + filtro.texto.trim() + '"' : 'ese filtro') + '.'
+      : 'Todavía no hay usuarios registrados. Registre el primero en el formulario.';
     return `
       <tr>
-        <td class="vacio" colspan="6">
-          Ningún usuario coincide con ${filtro.texto.trim() ? '"' + filtro.texto.trim() + '"' : 'ese filtro'}.
-        </td>
+        <td class="vacio" colspan="6">${aviso}</td>
       </tr>`;
   }
 

@@ -8,7 +8,8 @@ Acme.vistas.panel = (monticulo) => {
   const publicados = examenes.filter((uno) => uno.estado === 'Publicado').length;
   const preguntas = examenes.reduce((total, uno) => total + uno.preguntas.length, 0);
   const minutos = examenes.reduce((total, uno) => total + uno.tiempo, 0);
-  const masLargo = Math.max(...examenes.map((uno) => uno.tiempo));
+  // Math.max de una lista vacía devuelve -Infinity, y eso se leía en la tarjeta.
+  const masLargo = examenes.length ? Math.max(...examenes.map((uno) => uno.tiempo)) : 0;
 
   // El color de cada barra sale del promedio frente al porcentaje de aprobación
   // que el examen tiene configurado, no de un umbral fijo para todos.
@@ -143,7 +144,7 @@ Acme.vistas.panel = (monticulo) => {
                 <div class="i wa"><i class="ic clock"></i></div>
                 <div class="v">${minutos} min</div>
                 <div class="k">Tiempo sumado</div>
-                <div class="d">el más largo dura ${masLargo} min</div>
+                <div class="d">${masLargo ? 'el más largo dura ' + masLargo + ' min' : 'ningún examen creado'}</div>
               </div>
             </div>
 
