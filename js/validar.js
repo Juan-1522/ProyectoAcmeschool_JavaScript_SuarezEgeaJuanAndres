@@ -1,5 +1,4 @@
-// Las reglas de los formularios devuelven el texto del aviso; si todo está
-// bien devuelven una cadena vacía y el campo no muestra nada.
+// Reglas de los formularios
 Acme.validar = {
   correo(valor, textoVacio) {
     if (!valor.trim()) {
@@ -18,8 +17,7 @@ Acme.validar = {
     return '';
   },
 
-  // Al registrar a alguien se pide una contraseña nueva, así que aquí sí se
-  // exige longitud; en el acceso se deja pasar cualquiera porque ya está guardada.
+  // Clave nueva
   claveNueva(valor) {
     if (!valor) {
       return 'Escribe la contraseña.';
@@ -63,8 +61,7 @@ Acme.validar = {
     return '';
   },
 
-  // El código se escribe como venga: aquí se pasa a mayúsculas antes de mirar
-  // la forma, para que "exa-005" sirva igual que "EXA-005".
+  // Código del examen
   codigoExamen(valor) {
     if (!valor.trim()) {
       return 'Escribe el código del examen.';
@@ -92,8 +89,7 @@ Acme.validar = {
     return '';
   },
 
-  // Con type="number" el navegador deja pasar la "e" científica y esconde las
-  // flechas según el navegador, así que se valida como texto y se convierte.
+  // Duración del examen
   tiempo(valor) {
     if (!valor.trim()) {
       return 'Escribe cuánto dura el examen.';
@@ -116,8 +112,7 @@ Acme.validar = {
     return '';
   },
 
-  // Debajo del campo va un párrafo con el id del campo más "-error"; aquí se
-  // escribe el texto, se marca el borde y se avisa a quien usa lector de pantalla.
+  // Aviso de un campo
   mostrar(monticulo, campo, mensaje) {
     const error = monticulo.querySelector('#' + campo + '-error');
     error.textContent = mensaje;

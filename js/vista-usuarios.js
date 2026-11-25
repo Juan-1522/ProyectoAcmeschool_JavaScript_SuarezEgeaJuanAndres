@@ -1,15 +1,12 @@
 Acme.vistas = Acme.vistas || {};
 
-// El buscador y el sello elegido se guardan aquí porque al filtrar solo se
-// vuelve a pintar la tabla, no la página completa.
+// Filtro de la tabla
 const filtro = { texto: '', cargo: '' };
 
-// El aviso del formulario sobrevive al re-renderizado que limpia los campos,
-// porque la página entera se vuelve a montar después de guardar.
+// Aviso del formulario
 let aviso = null;
 
-// Identificación de la persona que se está editando; mientras valga algo, el
-// formulario de la derecha muestra sus datos en vez de estar en blanco.
+// Usuario en edición
 let editando = null;
 
 function usuarioEnEdicion() {
@@ -42,7 +39,7 @@ function seleccionados() {
 
 function filas(lista) {
   if (!lista.length) {
-    // Si no hay ningún usuario, culpar al filtro sería mentira.
+    // Aviso de tabla vacía
     const aviso = filtro.texto.trim() || filtro.cargo
       ? 'Ningún usuario coincide con ' + (filtro.texto.trim() ? '"' + filtro.texto.trim() + '"' : 'ese filtro') + '.'
       : 'Todavía no hay usuarios registrados. Registre el primero en el formulario.';
@@ -204,8 +201,7 @@ Acme.vistas.usuarios = (monticulo) => {
   const buscar = monticulo.querySelector('#buscar');
   buscar.value = filtro.texto;
 
-  // Los datos de quien se edita se copian desde JavaScript para no escapar
-  // nombres con comillas ni tildes dentro del HTML del formulario.
+  // Datos precargados
   const enEdicion = usuarioEnEdicion();
   if (enEdicion) {
     const poner = (campo, valor) => {
@@ -239,8 +235,7 @@ Acme.vistas.usuarios = (monticulo) => {
     pintar();
   });
 
-  // El lápiz y la papelera viven en filas que se vuelven a pintar con el
-  // buscador, así que el aviso se pone en el cuerpo de la tabla y no en cada botón.
+  // Acciones de cada fila
   monticulo.querySelector('#cuerpo').addEventListener('click', (evento) => {
     const botonEditar = evento.target.closest('[data-edita]');
     if (botonEditar) {
@@ -295,7 +290,7 @@ Acme.vistas.usuarios = (monticulo) => {
     cajaAviso.hidden = !aviso;
   };
 
-  // Cualquier tecla dentro del formulario esconde el aviso anterior.
+  // Esconde el aviso
   formularioNuevo.addEventListener('input', () => {
     if (aviso) {
       aviso = null;
@@ -312,8 +307,7 @@ Acme.vistas.usuarios = (monticulo) => {
       'dato-nombre': Acme.validar.nombre(valor('dato-nombre')),
       'dato-correo': Acme.validar.correo(valor('dato-correo'), 'Escribe el correo del usuario.'),
       'dato-telefono': Acme.validar.telefono(valor('dato-telefono')),
-      // En edición la contraseña puede quedar vacía, y eso quiere decir que no
-      // se cambia, así que ahí no se le exige longitud.
+      // Clave vacía en edición
       'dato-clave': enEdicion && !valor('dato-clave') ? '' : Acme.validar.claveNueva(valor('dato-clave'))
     };
 

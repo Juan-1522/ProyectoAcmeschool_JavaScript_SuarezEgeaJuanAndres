@@ -69,8 +69,7 @@ code {
   outline-offset: 2px;
 }
 
-/* El enlace de salto no se ve hasta que alguien lo alcanza con Tab; si se
-   tapaba del todo dejaba de existir para el lector de pantalla. */
+/* Saltar al contenido */
 .skip {
   clip-path: inset(50%);
   height: 1px;
@@ -167,7 +166,7 @@ code {
   mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'><path d='M12 5.5v13M5.5 12h13'/></svg>");
 }
 
-/* El ojo dice "publicar" y el ojo tachado "quitar de la lista". */
+/* Icono de ojo */
 .ic.eye {
   -webkit-mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linejoin='round'><path d='M2.6 12S6 5.9 12 5.9 21.4 12 21.4 12 18 18.1 12 18.1 2.6 12 2.6 12z'/><circle cx='12' cy='12' r='3.1'/></svg>");
   mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linejoin='round'><path d='M2.6 12S6 5.9 12 5.9 21.4 12 21.4 12 18 18.1 12 18.1 2.6 12 2.6 12z'/><circle cx='12' cy='12' r='3.1'/></svg>");
@@ -316,8 +315,7 @@ textarea {
   overflow: hidden;
 }
 
-/* La etiqueta no pinta: con display contents el aside queda como hijo directo de
-   .page y siguen aplicando las reglas de siempre. */
+/* La barra lateral */
 acme-barra {
   display: contents;
 }
@@ -477,9 +475,7 @@ a.nav:hover {
   flex-wrap: wrap;
 }
 
-/* La columna pide 776 px: son los 730 que mide la tabla de usuarios en su
-   ancho mínimo más los 46 de respiro de la tarjeta. Si con el formulario al
-   lado no caben, el formulario baja solo en vez de hacer deslizar la tabla. */
+/* Ancho de la columna principal */
 .col {
   flex: 1 1 776px;
   min-width: 0;
@@ -520,7 +516,7 @@ a.nav:hover {
   color: var(--petrol);
 }
 
-/* La papelera se distingue por color, no solo por el dibujo del icono. */
+/* Botón de borrar */
 .ib.del {
   color: var(--no);
   border-color: #f2d7d5;
@@ -648,7 +644,7 @@ a.nav:hover {
   margin-left: auto;
 }
 
-/* Sin pendientes no hay a dónde llevar, así que la fila no trae botón. */
+/* Tarea terminada */
 .tarea.fin {
   background: #fff;
   border-style: dashed;
@@ -719,15 +715,14 @@ td.vacio {
   overflow-x: auto;
 }
 
-/* Con la columna de acciones la tabla de usuarios ya no cabía entera en 1440;
-   quitarle respiro a los lados de cada celda la deja visible sin scroll. */
+/* Tabla con celdas ajustadas */
 .tw.compact th,
 .tw.compact td {
   padding-left: 8px;
   padding-right: 8px;
 }
 
-/* La última columna va pegada al borde del contenido, sin el respiro derecho. */
+/* Columna de acciones */
 .tw.compact th.acc,
 .tw.compact td.acc {
   padding-right: 0;
@@ -771,8 +766,7 @@ tbody tr:hover {
   background: #f8fbfe;
 }
 
-/* La fila en edición se queda sombreada aunque el puntero pase por encima,
-   para no perder de vista a quién pertenece el formulario de la derecha. */
+/* Fila seleccionada */
 tbody tr.sel,
 tbody tr.sel:hover {
   background: var(--petrol-soft);
@@ -804,8 +798,7 @@ td .ex small {
   font-weight: 600;
 }
 
-/* La descripción es lo único del examen que puede quedar largo, así que aquí
-   sí se deja saltar de línea y se le pone tope para que la tabla quepa. */
+/* Descripción del examen */
 td .ex small {
   white-space: normal;
   max-width: 250px;
@@ -885,9 +878,7 @@ td .code {
   margin-bottom: 7px;
 }
 
-/* La regla general pone width:100% en todos los inputs y ahí el radio se
-   estiraba hasta desaparecer. Suelto mide 16 px y en el teléfono casi no se
-   atina, así que va dentro de una etiqueta que le da un blanco de 32 px. */
+/* Caja de la respuesta correcta */
 .q-ok {
   align-items: center;
   display: flex;
@@ -1202,8 +1193,7 @@ td .code {
 
 /* ===== módulo público ===== */
 
-/* El envoltorio se llama pubwrap y no pub: la pastilla de "Aprobado" lleva la
-   clase pub y heredaba este min-height, estirando las filas del panel. */
+/* Envoltorio del módulo público */
 .pubwrap {
   display: flex;
   flex-direction: column;
@@ -1301,8 +1291,7 @@ td .code {
   font-size: 13px;
 }
 
-/* El botón va pegado al fondo: si un examen trae la descripción más larga, las
-   tarjetas del par siguen quedando al mismo nivel. */
+/* Botón de la tarjeta de examen */
 .excard .btn {
   align-self: flex-start;
   margin-top: auto;
@@ -1344,8 +1333,7 @@ td .code {
   white-space: nowrap;
 }
 
-/* El reloj va en la cabecera, al lado del contador, para no tener que subir a
-   ver cuánto queda. */
+/* Reloj del examen */
 .timer {
   align-items: center;
   background: var(--navy);
@@ -1410,8 +1398,7 @@ td .code {
   gap: 7px;
 }
 
-/* label viene con display:block y margen para los campos del formulario; acá es
-   la caja de la opción, con el radio adentro y el texto al lado. */
+/* Caja de una opción */
 .pop {
   align-items: center;
   background: #fff;
@@ -1440,7 +1427,7 @@ td .code {
   width: 17px;
 }
 
-/* Sin :has el recuadro no se pinta, pero el radio del navegador igual se ve. */
+/* Opción elegida */
 .pop:has(input:checked) {
   background: var(--petrol-soft);
   border-color: var(--petrol);
@@ -1452,8 +1439,7 @@ td .code {
 
 /* ===== revisión de respuestas ===== */
 
-/* Acá las opciones no se pueden tocar: el color y la etiqueta de al lado son los
-   que explican qué pasó en cada pregunta. */
+/* Opciones en la revisión */
 .rev .pop {
   cursor: default;
 }
@@ -1523,8 +1509,7 @@ td .code {
   margin-bottom: 3px;
 }
 
-/* La línea del tiempo queda entre la caja y el botón: sin este aire el botón se
-   le pega encima. */
+/* Aire bajo la nota */
 .notabox + .hint {
   margin-bottom: 14px;
 }
@@ -1557,8 +1542,7 @@ td .code {
   margin-top: 5px;
 }
 
-/* La descripción es un textarea, así que el borde rojo tiene que llegarle igual
-   que a las cajas normales. */
+/* Campo con error */
 input.malo, textarea.malo {
   border-color: var(--no);
 }
@@ -1628,9 +1612,7 @@ input.malo:focus, textarea.malo:focus {
   font-size: 12.5px;
 }
 
-/* De 1120 px hacia abajo la barra lateral pasa a encabezar la página. Deja de
-   restar 252 px, así que la tabla de usuarios, que necesita 730, sigue entrando
-   como tabla en vez de empezar a deslizar. */
+/* Tableta: la barra pasa a encabezado */
 @media (max-width: 1120px) {
   .page {
     flex-wrap: wrap;
@@ -1682,8 +1664,7 @@ input.malo:focus, textarea.malo:focus {
     flex-wrap: wrap;
   }
 
-  /* El buscador se queda solo en su línea: si comparte la fila con el botón de
-     examen, la caja baja a 191 px y el texto de ejemplo se corta. */
+  /* Buscador en su propia línea */
   .srchw {
     flex: 1 1 100%;
   }
@@ -1696,7 +1677,7 @@ input.malo:focus, textarea.malo:focus {
     flex-wrap: wrap;
   }
 
-  /* El título y la explicación ocupan la fila entera y el botón baja solo. */
+  /* Título y descripción arriba */
   .tarea {
     flex-wrap: wrap;
   }
@@ -1739,18 +1720,14 @@ input.malo:focus, textarea.malo:focus {
   }
 }
 
-/* Al pasar el puntero el botón se hunde un poco; quien pide menos movimiento
-   no necesita esa transición para ver que el botón responde. */
+/* Menos movimiento */
 @media (prefers-reduced-motion: reduce) {
   .btn {
     transition: none;
   }
 }
 
-/* De 860 px hacia abajo la tabla de usuarios, que mide 730 en su ancho mínimo,
-   ya no entra ni quitándole el respiro a las celdas. Cada fila pasa a ficha y
-   la etiqueta de la columna se pone al lado del valor, así que ningún dato
-   desaparece. */
+/* Teléfono: las filas pasan a fichas */
 @media (max-width: 860px) {
   .tw {
     overflow: visible;
@@ -1787,8 +1764,7 @@ input.malo:focus, textarea.malo:focus {
     padding: 7px 0;
     border-bottom: 0;
     white-space: normal;
-    /* Un correo escrito sin guiones no tiene dónde romperse y saldría de la
-       ficha; aquí se corta por donde haga falta. */
+    /* Correo que se corta */
     overflow-wrap: anywhere;
   }
 
@@ -1802,7 +1778,7 @@ input.malo:focus, textarea.malo:focus {
     flex: 0 0 auto;
   }
 
-  /* El valor es lo que debe ceder cuando la etiqueta y el dato no caben. */
+  /* El valor cede ante la etiqueta */
   .tw td > * {
     min-width: 0;
     text-align: right;

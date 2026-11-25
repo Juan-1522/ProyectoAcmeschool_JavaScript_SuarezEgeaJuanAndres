@@ -1,8 +1,6 @@
 Acme.vistas = Acme.vistas || {};
 
-// El módulo entero va dentro de esta llamada porque los archivos clásicos
-// comparten el mismo espacio global: declarado suelto, el "filtro" de exámenes
-// choca con el de usuarios y el navegador tira abajo los dos archivos.
+// Módulo de exámenes
 (() => {
   const filtro = { texto: '', estado: '' };
 
@@ -12,18 +10,16 @@ Acme.vistas = Acme.vistas || {};
     { etiqueta: 'Borradores', estado: 'Borrador' }
   ];
 
-  // El plural no se arma pegando una "s", porque "borrador" saldría "borradors".
+  // Plural de los estados
   const plurales = { Publicado: 'publicados', Borrador: 'en borrador' };
 
-  // El formulario no está montado siempre: la tabla necesita todo el ancho para
-  // que las seis columnas quepan sin scroll, así que solo aparece cuando se pide.
+  // Si el formulario está abierto
   let creando = false;
 
-  // Sobrevive al re-renderizado que vacía el formulario después de guardar.
+  // Aviso del formulario
   let aviso = null;
 
-  // Código del examen que se está editando. Se guarda el código y no el objeto
-  // porque al volver a montar la vista hay que ir a buscarlo de nuevo en la lista.
+  // Examen en edición
   let editando = null;
 
   function examenEnEdicion() {
@@ -37,8 +33,7 @@ Acme.vistas = Acme.vistas || {};
         <p class="aviso ${aviso ? aviso.tipo : 'no'}" id="${id}" ${aviso ? '' : 'hidden'}>${aviso ? aviso.texto : ''}</p>`;
   }
 
-  // Se llama igual que la de usuarios y no choca porque esta queda dentro de la
-  // llamada de arriba; la global solo la ve el archivo de usuarios.
+  // Campo del formulario
   function campo(id, etiqueta, atributos) {
     return `
       <div class="field">
@@ -48,18 +43,15 @@ Acme.vistas = Acme.vistas || {};
       </div>`;
   }
 
-  // El enunciado y las respuestas viven en este arreglo mientras se escribe,
-  // porque cada vez que se agrega o se quita algo se vuelve a pintar el bloque
-  // entero y un re-pintado se lleva lo que había en las cajas.
+  // Preguntas del editor
   let preguntas = [];
 
   function preguntaVacia() {
-    // Dos respuestas como mínimo: con una sola no hay forma de equivocarse.
+    // Pregunta vacía
     return { enunciado: '', respuestas: ['', ''], correcta: -1 };
   }
 
-  // Lo guardado lleva la correcta dentro de cada respuesta y el editor la lleva
-  // aparte, así que al abrir un examen hay que separar los dos datos.
+  // De lo guardado al editor
   function desdeGuardadas(lista) {
     return lista.map((pregunta) => ({
       enunciado: pregunta.enunciado,
@@ -175,7 +167,7 @@ ${avisoCaja('aviso-examen')}
 
   function filas(lista) {
     if (!lista.length) {
-      // Si no hay ningún examen, culpar al filtro sería mentira.
+      // Aviso de tabla vacía
       const aviso = filtro.texto.trim() || filtro.estado
         ? 'Ningún examen coincide con ' + (filtro.texto.trim() ? '"' + filtro.texto.trim() + '"' : 'ese filtro') + '.'
         : 'Todavía no hay exámenes. Cree el primero con Nuevo examen.';
@@ -295,8 +287,7 @@ ${avisoCaja('aviso-examen')}
     const buscar = monticulo.querySelector('#buscar');
     buscar.value = filtro.texto;
 
-    // Los datos del examen que se edita se copian desde JavaScript, igual que las
-    // preguntas: un título con comillas dentro del HTML arma un formulario roto.
+    // Datos precargados
     const enEdicion = examenEnEdicion();
     if (enEdicion) {
       const poner = (campoId, valor) => {
@@ -331,8 +322,7 @@ ${avisoCaja('aviso-examen')}
       pintar();
     });
 
-    // El lápiz, el ojo y la papelera viven en filas que se repintan con el
-    // buscador, así que el aviso se escucha en el cuerpo de la tabla.
+    // Acciones de cada fila
     monticulo.querySelector('#cuerpo').addEventListener('click', (evento) => {
       const editar = evento.target.closest('[data-edita]');
       if (editar) {
@@ -375,12 +365,10 @@ ${avisoCaja('aviso-examen')}
         return;
       }
       Acme.estado.examenes.splice(lugar, 1);
-      // Los intentos se van con el examen: la nota se calcula con sus preguntas,
-      // así que sin examen no hay forma de mostrarlos.
+      // Se van los intentos del examen
       Acme.estado.intentos = Acme.estado.intentos.filter((intento) => intento.codigo !== uno.codigo);
       if (editando === uno.codigo) {
-        // El formulario tenía justo ese examen delante, así que se cierra: dejarlo
-        // abierto con sus preguntas serviría para crear un examen con lo ajeno.
+        // Cierra el formulario
         editando = null;
         creando = false;
         preguntas = [];
@@ -421,8 +409,7 @@ ${avisoCaja('aviso-examen')}
       caja.hidden = !aviso;
     };
 
-    // El texto de cada caja se copia desde el arreglo en JavaScript, igual que en
-    // el formulario de usuarios: puesto en el HTML, una comilla lo desarmaría.
+    // Pinta las preguntas
     const pintarPreguntas = () => {
       listaP.innerHTML = preguntas.length
         ? preguntas.map(bloquePregunta).join('')
@@ -436,12 +423,10 @@ ${avisoCaja('aviso-examen')}
       });
     };
 
-    // El formulario llega con la lista vacía y aquí se llena, para que volver a
-    // este módulo después de ir al panel no muestre las preguntas en blanco.
+    // Pinta al abrir
     pintarPreguntas();
 
-    // Lo escrito en pantalla es la verdad, así que antes de mover el arreglo se
-    // recoge todo de vuelta; findIndex devuelve -1 si nadie marcó la correcta.
+    // Lee lo escrito en pantalla
     const leerPreguntas = () => [...listaP.querySelectorAll('.q')].map((bloque) => ({
       enunciado: bloque.querySelector('.q-en').value,
       respuestas: [...bloque.querySelectorAll('.q-op-t')].map((entrada) => entrada.value),
@@ -474,8 +459,7 @@ ${avisoCaja('aviso-examen')}
         const [numero, lugar] = quitarOp.dataset.quitarOp.split(':').map(Number);
         const pregunta = preguntas[numero];
         pregunta.respuestas.splice(lugar, 1);
-        // Al borrar una, las que siguen bajan un puesto; si la marcada era esa,
-        // se queda sin correcta hasta que se vuelva a elegir.
+        // La correcta al borrar
         if (pregunta.correcta === lugar) {
           pregunta.correcta = -1;
         } else if (pregunta.correcta > lugar) {
@@ -510,8 +494,7 @@ ${avisoCaja('aviso-examen')}
     const forma = monticulo.querySelector('#form-examen');
 
     forma.addEventListener('input', () => {
-      // Cada tecla devuelve lo escrito al arreglo, para que irse a otro módulo y
-      // volver no deje el examen a medias.
+      // Actualiza al teclear
       preguntas = leerPreguntas();
       if (aviso) {
         aviso = null;
@@ -549,7 +532,7 @@ ${avisoCaja('aviso-examen')}
         return;
       }
 
-      // Una respuesta en blanco no se guarda: se descarta y se revisa lo que queda.
+      // Descarta respuestas vacías
       const limpias = leerPreguntas().map((pregunta) => ({
         enunciado: pregunta.enunciado.trim(),
         respuestas: pregunta.respuestas
@@ -579,7 +562,7 @@ ${avisoCaja('aviso-examen')}
         return;
       }
 
-      // Un examen publicado sin preguntas sería una página sin qué responder.
+      // Publicar exige preguntas
       if (valor('dato-estado') === 'Publicado' && !limpias.length) {
         aviso = { tipo: 'no', texto: 'Sin preguntas no se puede publicar. Guárdalo en borrador.' };
         pintarAviso();
@@ -597,8 +580,7 @@ ${avisoCaja('aviso-examen')}
         preguntas: limpias
       };
 
-      // En edición se rellena el objeto que ya está en la lista, y así el examen
-      // no se va al final cuando el código nuevo lo ordena en otro puesto.
+      // Actualiza el examen existente
       if (enEdicion) {
         Object.assign(enEdicion, datos);
         editando = null;
@@ -616,11 +598,9 @@ ${avisoCaja('aviso-examen')}
             ? ' con ' + limpias.length + (limpias.length === 1 ? ' pregunta.' : ' preguntas.')
             : '.')
       };
-      // La página se monta entera para que el formulario quede en blanco y el
-      // aviso verde siga visible; así se puede crear el siguiente de una.
+      // Repinta la página
       Acme.vistas.examenes(monticulo);
-      // Sin esto el foco se queda en el cuerpo del documento y quien usa teclado
-      // o lector de pantalla pierde el sitio donde estaba escribiendo.
+      // Devuelve el foco
       monticulo.querySelector('#dato-codigo').focus();
     });
   };

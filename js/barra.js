@@ -1,14 +1,11 @@
 Acme.vistas = Acme.vistas || {};
 
-// Se quitan los acentos para que escribir "avila" encuentre a "Héctor Manuel
-// Ávila" sin tener que respetar las mayúsculas ni las tildes. Lo usan el
-// buscador de usuarios y el de exámenes.
+// Quita tildes y mayúsculas
 function normalizar(valor) {
   return valor.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
 
-// Armazón que comparten todas las vistas privadas: barra, encabezado y cuerpo.
-// Cada vista solo aporta su título y su contenido.
+// Armazón de las vistas privadas
 Acme.montar = (monticulo, pagina) => {
   monticulo.innerHTML = `
     <div class="page">

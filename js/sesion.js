@@ -1,6 +1,4 @@
-// "Recordar este equipo" guarda la sesión en localStorage, que sigue estando
-// al otro día. Sin esa casilla se queda en sessionStorage y se borra al cerrar
-// la pestaña.
+// La sesión iniciada
 Acme.sesion = {
   clave: 'acme:sesion',
 

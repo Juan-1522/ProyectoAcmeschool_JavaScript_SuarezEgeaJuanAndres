@@ -1,5 +1,4 @@
-// Compara la posición marcada en cada pregunta con la que el examen tiene como
-// correcta. En elegidas, -1 significa que se dejó sin responder.
+// Cálculo de la nota
 Acme.nota = (examen, elegidas) => {
   const aciertos = examen.preguntas.reduce((total, pregunta, posicion) => {
     const correcta = pregunta.respuestas.findIndex((una) => una.correcta);

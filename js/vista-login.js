@@ -22,8 +22,7 @@ const loginMarca = `
   </aside>`;
 
 function loginFormulario() {
-  // Sin novalidate el navegador corta el envío antes de llegar a nuestros
-  // avisos, y un correo mal escrito saldría con su recuadro gris.
+  // El formulario de acceso
   return `
     <form class="form" id="form-login" novalidate>
       <p class="eyebrow">Acceso al panel</p>
@@ -106,8 +105,7 @@ Acme.vistas.login = (monticulo) => {
   monticulo.innerHTML = '<main class="auth">' + loginMarca + loginFormulario() + '</main>';
   enlazarFormulario(monticulo);
 
-  // El botón no inicia sesión: lleva al módulo público, el único que se abre
-  // sin cuenta, y el hashchange se encarga de montarlo.
+  // Botón al módulo público
   monticulo.querySelector('#ir-publico').addEventListener('click', () => {
     location.hash = '#/publico';
   });

@@ -4,7 +4,6 @@ Acme.almacen = {
       const guardado = JSON.parse(localStorage.getItem(clave));
       return guardado === null ? valorInicial : guardado;
     } catch (error) {
-      // Si el texto guardado quedó incompleto, se devuelve el valor inicial.
       return valorInicial;
     }
   },

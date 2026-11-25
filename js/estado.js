@@ -1,6 +1,4 @@
-// Los arreglos de datos.js son el punto de partida. La primera vez que se abre
-// la página se guardan en el navegador, y de ahí en adelante se trabaja siempre
-// sobre la copia que devuelve el almacenamiento.
+// Estado de la app
 Acme.estado = {
   listas: ['usuarios', 'examenes', 'intentos'],
 

@@ -1,8 +1,6 @@
-// Componentes propios. No llevan shadow DOM a propósito: la única hoja de
-// estilos es la global, y si el contenido queda en el DOM de la página las
-// clases de styles.css siguen aplicando dentro de la etiqueta.
+// Componentes propios
 
-// Cada palabra de más de dos letras aporta su inicial, con dos palabras como mucho.
+// Las dos iniciales
 function iniciales(nombre) {
   return nombre
     .split(' ')
@@ -12,7 +10,7 @@ function iniciales(nombre) {
     .join('');
 }
 
-// Los nombres van dentro de un atributo, y una comilla cerraría la etiqueta antes de tiempo.
+// Escapa el valor de un atributo
 function atributo(valor) {
   return String(valor)
     .replace(/&/g, '&amp;')
@@ -20,7 +18,7 @@ function atributo(valor) {
     .replace(/"/g, '&quot;');
 }
 
-// El círculo con las dos iniciales: barra lateral, tabla de usuarios y últimas notas del panel.
+// El círculo de iniciales
 class AcmeInicial extends HTMLElement {
   connectedCallback() {
     this.classList.add('av');
@@ -28,8 +26,7 @@ class AcmeInicial extends HTMLElement {
   }
 }
 
-// Barra de los módulos privados. La vista solo dice qué ruta está activa; el
-// resto se arma acá, con los contadores leídos al momento de pintar.
+// Módulos de la barra
 const modulos = [
   { ruta: '#/panel', icono: 'grid', texto: 'Panel' },
   {
@@ -61,8 +58,7 @@ class AcmeBarra extends HTMLElement {
         </a>`;
     }).join('');
 
-    // El aside queda dentro de la etiqueta: así la barra sigue siendo un landmark
-    // para quien navega con lector de pantalla.
+    // La barra lateral
     this.innerHTML = `
       <aside class="side">
         <div class="brand">

@@ -1,16 +1,13 @@
 Acme.vistas = Acme.vistas || {};
 
 (() => {
-  // Quién responde, qué examen tiene delante y qué lleva marcado. Se guardan
-  // afuera del HTML porque cada pantalla monta la vista de nuevo y en el
-  // repintado se perderían las respuestas.
+  // Estado del módulo
   let pantalla = 'lista';
   let elegido = null;
   let identidad = null;
   let elegidas = [];
   let resultado = null;
-  // El reloj no vive en el HTML: se leen los segundos que quedan, así que al
-  // repintar una pantalla no se pierde la cuenta.
+  // Variables del reloj
   let reloj = null;
   let restante = 0;
   let inicio = 0;
@@ -54,8 +51,7 @@ Acme.vistas = Acme.vistas || {};
     return String(min).padStart(2, '0') + ':' + String(seg).padStart(2, '0');
   }
 
-  // Con el mismo formato de las fechas que ya trae la semilla, para que el panel
-  // las pueda ordenar comparándolas como texto.
+  // Fecha de hoy
   function fechaActual() {
     const ahora = new Date();
     const dos = (n) => String(n).padStart(2, '0');
@@ -63,8 +59,7 @@ Acme.vistas = Acme.vistas || {};
       'T' + dos(ahora.getHours()) + ':' + dos(ahora.getMinutes()) + ':' + dos(ahora.getSeconds());
   }
 
-  // Pinta sobre lo que esté montado en este momento. Si la persona se fue a otra
-  // ruta la cuenta sigue corriendo, y el reloj solo se ve al volver al examen.
+  // Pinta el reloj
   function pintaReloj() {
     const caja = contenedor && contenedor.querySelector('#reloj-caja');
     if (!caja) {
@@ -79,17 +74,14 @@ Acme.vistas = Acme.vistas || {};
     reloj = null;
   }
 
-  // Los segundos que quedan se leen contra la hora del equipo, no contra la
-  // cantidad de ticks: una pestaña congelada o un hilo lento no deben regalarle
-  // tiempo a quien responde.
+  // Segundos que quedan
   function quedan() {
     return Math.max(0, limite - Math.round((Date.now() - inicio) / 1000));
   }
 
   function arrancar() {
     parar();
-    // Se retoma desde lo que quedaba, para que un repintado de la pantalla no
-    // devuelva el examen a su tiempo completo.
+    // Arranca el reloj
     inicio = Date.now() - (limite - restante) * 1000;
     reloj = setInterval(() => {
       restante = quedan();
@@ -101,8 +93,7 @@ Acme.vistas = Acme.vistas || {};
     }, 1000);
   }
 
-  // El intento se guarda con la forma que ya lee el panel: a quién, qué examen,
-  // cuándo, cuánto tardó y qué marcó en cada pregunta.
+  // Guarda el intento
   function cerrar(segundosUsados, porTiempo) {
     parar();
     const examen = examenActual();
@@ -119,8 +110,7 @@ Acme.vistas = Acme.vistas || {};
     Acme.estado.guardar('intentos');
     resultado = Acme.nota(examen, elegidas);
     pantalla = 'nota';
-    // Se cierra solo si el examen sigue en pantalla: si la persona se fue a otra
-    // ruta, la nota queda esperando a que vuelva a entrar al módulo.
+    // La nota
     if (contenedor.querySelector('#reloj-caja')) {
       Acme.vistas.publico(contenedor);
     }
@@ -139,8 +129,7 @@ Acme.vistas = Acme.vistas || {};
         </div>`;
   }
 
-  // El módulo público no tiene barra lateral: quien responde no es un usuario
-  // del panel, así que la marca va arriba y el único enlace es volver al acceso.
+  // Marco del módulo público
   function marco(titulo, bajo, interior) {
     return `
       <div class="pubwrap">
@@ -285,8 +274,7 @@ Acme.vistas = Acme.vistas || {};
     );
   }
 
-  // En la revisión ya no hay radios: el color dice qué era correcto y la etiqueta
-  // de al lado lo explica con palabras, para que no dependa solo del verde o rojo.
+  // Pantalla de revisión
   function pantallaRevision() {
     const examen = examenActual();
 
@@ -332,7 +320,7 @@ Acme.vistas = Acme.vistas || {};
     );
   }
 
-  // Irse a mitad de examen tira lo respondido, así que primero pregunta.
+  // Pregunta antes de salir
   function puedeSalir() {
     return pantalla !== 'examen' || !respondidas() ||
       window.confirm('¿Salir sin terminar? Lo respondido no se guarda.');
@@ -347,11 +335,10 @@ Acme.vistas = Acme.vistas || {};
           : pantalla === 'nota' ? pantallaNota()
             : pantalla === 'revision' ? pantallaRevision()
               : pantallaLista();
-    // La revisión es larga: sin esto, al volver al resultado queda uno viendo el medio.
+    // Volver arriba
     window.scrollTo(0, 0);
 
-    // El enlace de arriba está en todas las pantallas: en el examen puede
-    // significar perder respuestas, y en las demás solo limpia lo elegido.
+    // Enlace de volver al acceso
     monticulo.querySelector('#salir-pub').addEventListener('click', (evento) => {
       if (!puedeSalir()) {
         evento.preventDefault();
@@ -413,7 +400,7 @@ Acme.vistas = Acme.vistas || {};
         }
 
         identidad = { id: identificacion.trim(), nombre: nombre.trim() };
-        // Cada pregunta arranca en -1, que es la señal de que quedó vacía.
+        // Preguntas sin marcar
         elegidas = examenActual().preguntas.map(() => -1);
         limite = examenActual().tiempo * 60;
         restante = limite;
@@ -425,15 +412,13 @@ Acme.vistas = Acme.vistas || {};
       });
     }
 
-    // #pq-lista solo existe en el examen; la revisión usa #rev-lista para no
-    // enganchar estos botones que ahí no están.
+    // Lista de preguntas
     const cuerpo = monticulo.querySelector('#pq-lista');
     if (cuerpo) {
       const examen = examenActual();
       const contador = monticulo.querySelector('#contador');
 
-      // El change llega por delegación porque las opciones se pintan todas
-      // juntas y al cambiar de pantalla se montan otras cajas distintas.
+      // Marca la opción elegida
       cuerpo.addEventListener('change', (evento) => {
         const marca = evento.target;
         if (marca.type !== 'radio') {
@@ -486,8 +471,7 @@ Acme.vistas = Acme.vistas || {};
       });
     }
 
-    // Se retoma la cuenta con lo que quedaba, que es lo que queda cuando se salió
-    // con el botón atrás en vez de con el enlace de volver.
+    // Retoma el reloj al volver
     if (pantalla === 'examen') {
       pintaReloj();
       arrancar();

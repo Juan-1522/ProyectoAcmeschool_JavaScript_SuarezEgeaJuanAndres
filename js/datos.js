@@ -254,8 +254,7 @@ const examenes = [
   }
 ];
 
-// elegidas guarda la posición de la opción que marcó cada estudiante,
-// y -1 significa que dejó la pregunta sin responder.
+// Intentos de ejemplo
 const intentos = [
   {
     codigo: 'EXA-001',

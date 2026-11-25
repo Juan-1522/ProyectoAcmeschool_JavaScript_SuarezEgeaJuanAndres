@@ -1,14 +1,11 @@
 const pantalla = document.getElementById('app');
 
-// La barra lateral cambia el hash de la dirección y aquí se decide qué vista
-// tocar. Cualquier ruta privada sin sesión abierta devuelve el formulario de
-// acceso, y un hash que no está en la tabla termina en el panel.
+// Mapa de rutas
 const rutas = {
   '#/panel': { vista: 'panel', privado: true },
   '#/usuarios': { vista: 'usuarios', privado: true },
   '#/examenes': { vista: 'examenes', privado: true },
-  // La única que no pide sesión: quien viene a resolver un examen no es
-  // usuario del panel.
+  // El módulo público
   '#/publico': { vista: 'publico', privado: false }
 };
 

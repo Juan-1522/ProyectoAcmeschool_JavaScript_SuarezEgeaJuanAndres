@@ -8,11 +8,10 @@ Acme.vistas.panel = (monticulo) => {
   const publicados = examenes.filter((uno) => uno.estado === 'Publicado').length;
   const preguntas = examenes.reduce((total, uno) => total + uno.preguntas.length, 0);
   const minutos = examenes.reduce((total, uno) => total + uno.tiempo, 0);
-  // Math.max de una lista vacía devuelve -Infinity, y eso se leía en la tarjeta.
+  // El examen más largo
   const masLargo = examenes.length ? Math.max(...examenes.map((uno) => uno.tiempo)) : 0;
 
-  // El color de cada barra sale del promedio frente al porcentaje de aprobación
-  // que el examen tiene configurado, no de un umbral fijo para todos.
+  // Barras de rendimiento
   const barras = examenes.map((examen) => {
     const notas = Acme.estado.intentos
       .filter((uno) => uno.codigo === examen.codigo)
@@ -32,8 +31,7 @@ Acme.vistas.panel = (monticulo) => {
       </div>`;
   }).join('');
 
-  // Un intento de un examen que ya no está no tiene nota que calcular, así que
-  // no entra en la tabla ni en los pendientes.
+  // Intentos con examen vigente
   const vigentes = Acme.estado.intentos.filter((intento) =>
     examenes.some((examen) => examen.codigo === intento.codigo));
 
@@ -49,8 +47,7 @@ Acme.vistas.panel = (monticulo) => {
     .slice(0, 3);
 
   const filas = ultimos.map(({ intento, examen, nota }) => {
-    // Se comparan los segundos y no el texto: el reloj escribe '05:00' y la
-    // semilla trae '5:00' para el mismo examen de cinco minutos.
+    // Tiempo en segundos
     const [min, seg] = intento.tiempoUsado.split(':').map(Number);
     const total = String(examen.tiempo).padStart(2, '0') + ':00';
     const tiempo = min * 60 + seg === examen.tiempo * 60
@@ -72,8 +69,7 @@ Acme.vistas.panel = (monticulo) => {
       </tr>`;
   }).join('');
 
-  // El cartel de pendientes se arma con lo que ya está en la pantalla: si un
-  // número no molesta, su fila no aparece.
+  // Texto en plural
   const plural = (cantidad, uno, varios) => cantidad + ' ' + (cantidad === 1 ? uno : varios);
   const sinIntentos = usuarios.filter((uno) =>
     !vigentes.some((intento) => intento.identificacion === uno.id)).length;
@@ -193,8 +189,7 @@ Acme.vistas.panel = (monticulo) => {
     `
   });
 
-  // Cada botón trae el destino escrito en la fila: una ruta del panel o un
-  // bloque de esta misma página al que hace falta bajar.
+  // Botones de las tareas
   monticulo.querySelector('#tareas').addEventListener('click', (evento) => {
     const boton = evento.target.closest('button');
     if (!boton) return;
