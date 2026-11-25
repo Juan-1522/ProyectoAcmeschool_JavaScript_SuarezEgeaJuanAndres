@@ -177,19 +177,19 @@ Acme.vistas.usuarios = (monticulo) => {
     contenido: `
       <div class="card">
         <div class="ch">
-          <div id="info">${encabezado(seleccionados(), totales())}</div>
+          <div id="info" role="status">${encabezado(seleccionados(), totales())}</div>
           <div class="r chips" id="chips">${chips()}</div>
         </div>
         <div class="tw compact">
           <table>
             <thead>
               <tr>
-                <th>Identificación</th>
-                <th>Nombre completo</th>
-                <th>Correo</th>
-                <th>Teléfono</th>
-                <th>Cargo</th>
-                <th class="acc">Acciones</th>
+                <th scope="col">Identificación</th>
+                <th scope="col">Nombre completo</th>
+                <th scope="col">Correo</th>
+                <th scope="col">Teléfono</th>
+                <th scope="col">Cargo</th>
+                <th class="acc" scope="col">Acciones</th>
               </tr>
             </thead>
             <tbody id="cuerpo">${filas(seleccionados())}</tbody>

@@ -133,12 +133,13 @@ Acme.vistas = Acme.vistas || {};
   function marco(titulo, bajo, interior) {
     return `
       <div class="pubwrap">
+        <a class="skip" href="#contenido">Saltar al contenido</a>
         <header class="pubtop">
           <span class="bk">A</span>
           <div class="pubmarca"><b>Acme School</b><small>Exámenes abiertos</small></div>
           <a class="pubsalir" href="#/" id="salir-pub">Volver al acceso</a>
         </header>
-        <main class="pubmain">
+        <main class="pubmain" id="contenido" tabindex="-1">
           <p class="eyebrow">Módulo público</p>
           <h1>${titulo}</h1>
           <p class="sub">${bajo}</p>
@@ -236,7 +237,7 @@ Acme.vistas = Acme.vistas || {};
       `
         <div class="card pubhead">
           ${ficha(examen)}
-          <p class="sub" id="contador">${respondidas()} de ${examen.preguntas.length} respondidas</p>
+          <p class="sub" id="contador" role="status">${respondidas()} de ${examen.preguntas.length} respondidas</p>
           <p class="timer" id="reloj-caja"><i class="ic clock"></i><b id="reloj">${relojTexto(restante)}</b></p>
         </div>
         <div id="pq-lista">${bloques}</div>

@@ -178,11 +178,11 @@ Acme.vistas.panel = (monticulo) => {
                 <table>
                   <thead>
                     <tr>
-                      <th>Estudiante</th>
-                      <th>Examen</th>
-                      <th>Nota</th>
-                      <th>Tiempo usado</th>
-                      <th>Estado</th>
+                      <th scope="col">Estudiante</th>
+                      <th scope="col">Examen</th>
+                      <th scope="col">Nota</th>
+                      <th scope="col">Tiempo usado</th>
+                      <th scope="col">Estado</th>
                     </tr>
                   </thead>
                   <tbody>${filas}</tbody>

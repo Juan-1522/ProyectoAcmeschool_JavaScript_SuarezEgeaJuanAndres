@@ -56,7 +56,7 @@ class AcmeBarra extends HTMLElement {
         ? `<span class="n">${modulo.cantidad()}</span>`
         : '';
       return `
-        <a class="nav${modulo.ruta === activa ? ' on' : ''}" href="${modulo.ruta}">
+        <a class="nav${modulo.ruta === activa ? ' on' : ''}" href="${modulo.ruta}"${modulo.ruta === activa ? ' aria-current="page"' : ''}>
           <i class="ic ${modulo.icono}"></i>${modulo.texto}${numero}
         </a>`;
     }).join('');
@@ -71,7 +71,9 @@ class AcmeBarra extends HTMLElement {
         </div>
 
         <p class="navlab">Módulos privados</p>
+        <nav aria-label="Módulos del panel">
         ${filas}
+        </nav>
 
         <div class="sidefoot">
           <div class="me">

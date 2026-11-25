@@ -7,7 +7,7 @@ const loginMarca = `
         <span class="bk">A</span>
         <div><b>Acme School</b><small>Plataforma de exámenes</small></div>
       </div>
-      <h2>Plataforma de exámenes<br>de la escuela Acme</h2>
+      <p class="bh">Plataforma de exámenes<br>de la escuela Acme</p>
       <p>Los docentes registran los usuarios y arman los exámenes con sus preguntas.
          Quien los resuelve no necesita cuenta: pone su identificación y su nombre,
          responde mientras corre el reloj y al final ve su porcentaje.</p>

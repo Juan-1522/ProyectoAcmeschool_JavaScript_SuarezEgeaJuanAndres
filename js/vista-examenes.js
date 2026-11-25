@@ -268,19 +268,19 @@ ${avisoCaja('aviso-examen')}
         <div class="card">
           ${creando ? '' : avisoCaja('aviso-lista')}
           <div class="ch">
-            <div id="info">${encabezado(seleccionados(), totales())}</div>
+            <div id="info" role="status">${encabezado(seleccionados(), totales())}</div>
             <div class="r chips" id="chips">${chips()}</div>
           </div>
           <div class="tw compact">
             <table>
               <thead>
                 <tr>
-                  <th>Código</th>
-                  <th>Título</th>
-                  <th>Tiempo</th>
-                  <th>Aprobación</th>
-                  <th>Preguntas</th>
-                  <th class="acc">Acciones</th>
+                  <th scope="col">Código</th>
+                  <th scope="col">Título</th>
+                  <th scope="col">Tiempo</th>
+                  <th scope="col">Aprobación</th>
+                  <th scope="col">Preguntas</th>
+                  <th class="acc" scope="col">Acciones</th>
                 </tr>
               </thead>
               <tbody id="cuerpo">${filas(seleccionados())}</tbody>

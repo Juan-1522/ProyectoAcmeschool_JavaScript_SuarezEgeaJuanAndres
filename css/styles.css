@@ -69,6 +69,32 @@ code {
   outline-offset: 2px;
 }
 
+/* El enlace de salto no se ve hasta que alguien lo alcanza con Tab; si se
+   tapaba del todo dejaba de existir para el lector de pantalla. */
+.skip {
+  clip-path: inset(50%);
+  height: 1px;
+  left: 12px;
+  overflow: hidden;
+  position: absolute;
+  top: 12px;
+  white-space: nowrap;
+  width: 1px;
+  z-index: 30;
+}
+
+.skip:focus {
+  background: var(--card);
+  border-radius: 10px;
+  box-shadow: var(--shadow-2);
+  clip-path: none;
+  color: var(--ink);
+  font-weight: 700;
+  height: auto;
+  padding: 10px 14px;
+  width: auto;
+}
+
 /* ===== iconos ===== */
 
 .ic {
@@ -327,7 +353,7 @@ acme-barra {
   font-weight: 800;
   letter-spacing: 1.4px;
   text-transform: uppercase;
-  color: #6f88a2;
+  color: #8ea7c0;
   padding: 0 10px;
   margin: 16px 0 8px;
 }
@@ -1021,11 +1047,14 @@ td .code {
   z-index: 1;
 }
 
-.auth .brand h2 {
+.auth .brand .bh {
+  color: #fff;
   font-size: 33px;
+  font-weight: 700;
   line-height: 1.2;
   letter-spacing: -.9px;
   margin-bottom: 14px;
+  max-width: none;
 }
 
 .auth .brand p {
@@ -1131,8 +1160,9 @@ td .code {
 }
 
 .recordar {
-  display: flex;
   align-items: center;
+  display: flex;
+  min-height: 24px;
   gap: 8px;
   font-size: 12.5px;
   font-weight: 600;
@@ -1141,7 +1171,8 @@ td .code {
 }
 
 .recordar input {
-  width: auto;
+  height: 16px;
+  width: 16px;
 }
 
 .hr {
@@ -1606,7 +1637,7 @@ input.malo:focus, textarea.malo:focus {
     gap: 24px;
   }
 
-  .auth .brand h2 {
+  .auth .brand .bh {
     font-size: 26px;
   }
 
@@ -1700,5 +1731,13 @@ input.malo:focus, textarea.malo:focus {
 
   .pubhead #contador {
     margin-left: 0;
+  }
+}
+
+/* Al pasar el puntero el botón se hunde un poco; quien pide menos movimiento
+   no necesita esa transición para ver que el botón responde. */
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none;
   }
 }

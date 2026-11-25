@@ -12,8 +12,9 @@ function normalizar(valor) {
 Acme.montar = (monticulo, pagina) => {
   monticulo.innerHTML = `
     <div class="page">
+      <a class="skip" href="#contenido">Saltar al contenido</a>
       <acme-barra activa="${pagina.activa}"></acme-barra>
-      <main class="main">
+      <main class="main" id="contenido" tabindex="-1">
         <header class="head">
           <div>
             <p class="eyebrow">${pagina.eyebrow}</p>
