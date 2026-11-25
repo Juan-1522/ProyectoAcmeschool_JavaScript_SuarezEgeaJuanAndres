@@ -1114,7 +1114,9 @@ td .code {
 
 /* ===== módulo público ===== */
 
-.pub {
+/* El envoltorio se llama pubwrap y no pub: la pastilla de "Aprobado" lleva la
+   clase pub y heredaba este min-height, estirando las filas del panel. */
+.pubwrap {
   display: flex;
   flex-direction: column;
   min-height: 100vh;

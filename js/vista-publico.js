@@ -132,7 +132,7 @@ Acme.vistas = Acme.vistas || {};
   // del panel, así que la marca va arriba y el único enlace es volver al acceso.
   function marco(titulo, bajo, interior) {
     return `
-      <div class="pub">
+      <div class="pubwrap">
         <header class="pubtop">
           <span class="bk">A</span>
           <div class="pubmarca"><b>Acme School</b><small>Exámenes abiertos</small></div>
