@@ -307,11 +307,10 @@ textarea {
 
 /* ===== panel ===== */
 
+/* El shell ocupa todo el ancho: la barra va pegada al borde */
 .page {
   display: flex;
-  max-width: 1440px;
   min-height: 100vh;
-  margin: 0 auto;
   overflow: hidden;
 }
 
