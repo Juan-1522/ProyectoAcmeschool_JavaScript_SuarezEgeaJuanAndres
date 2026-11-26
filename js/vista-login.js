@@ -52,7 +52,7 @@ function loginFormulario() {
       </div>
 
       <div class="btnrow">
-        <label class="recordar"><input id="recordar" name="recordar" type="checkbox" checked> Recordar este equipo</label>
+        <label class="recordar"><input id="recordar" name="recordar" type="checkbox"> Recordar en este equipo</label>
       </div>
 
       <button class="btn pri big" type="submit">Iniciar sesión</button>
