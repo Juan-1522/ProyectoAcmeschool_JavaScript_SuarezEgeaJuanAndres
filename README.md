@@ -101,6 +101,7 @@ y recargar. `js/datos.js` vuelve a sembrar el navegador con los datos de ejemplo
 ```
 index.html          Un solo div: la aplicación se monta ahí
 css/styles.css      La hoja de estilos completa
+capturas/           Las pantallas en computador y en celular
 js/datos.js         Los datos de ejemplo
 js/almacen.js       Leer y escribir en localStorage
 js/estado.js        Une los datos con el almacenamiento
@@ -133,6 +134,23 @@ agrega piezas al objeto global `Acme` y ninguna exporta nada.
 Las pantallas grandes muestran la barra lateral al lado del contenido. Desde 1120 px hacia
 abajo la barra pasa a encabezar la página, y debajo de 860 px cada fila de tabla se vuelve
 una ficha con la etiqueta de su columna, para que ninguna tabla tenga que deslizar.
+
+## Cómo se ve
+
+`capturas/` tiene la aplicación tomada en los dos tamaños con los que se probó. Son
+capturas de la página corriendo, sin retocar.
+
+**Computador, 1920 × 1080**
+
+| Acceso | Panel general |
+| --- | --- |
+| ![Acceso en computador](capturas/computador-acceso.png) | ![Panel general en computador](capturas/computador-panel.png) |
+
+**Celular, 390 × 844**
+
+| Acceso | Panel general |
+| --- | --- |
+| ![Acceso en celular](capturas/celular-acceso.png) | ![Panel general en celular](capturas/celular-panel.png) |
 
 ---
 
